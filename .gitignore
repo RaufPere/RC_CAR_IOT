@@ -1,0 +1,37 @@
+# Ignore build artifacts
+build/
+GeneratedSource/
+cy_output/
+
+# Ignore configuration files
+*.launch
+*.log
+
+# Ignore dependency and output files
+libs/
+deps/
+source/generated/
+
+# Ignore IDE-specific files
+.cproject
+.project
+.settings/
+
+# Ignore temporary files and directories
+*.bak
+*.swp
+*.tmp
+*.user
+*.opsettings
+
+# Ignore object and executable files
+*.o
+*.elf
+*.map
+*.hex
+*.bin
+*.a
+*.exe
+
+# Ignore backup files
+*~
