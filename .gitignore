@@ -1,37 +1,15 @@
-# Ignore build artifacts
-build/
-GeneratedSource/
-cy_output/
-
-# Ignore configuration files
-*.launch
-*.log
-
-# Ignore dependency and output files
-libs/
-deps/
-source/generated/
-
-# Ignore IDE-specific files
-.cproject
-.project
-.settings/
-
-# Ignore temporary files and directories
-*.bak
+# Ignore build output
+/build/
+# Ignore ModusToolbox workspace files
+/.mtb/
+# Ignore IDE specific files
 *.swp
-*.tmp
+*.swo
 *.user
-*.opsettings
-
-# Ignore object and executable files
-*.o
-*.elf
-*.map
-*.hex
-*.bin
-*.a
-*.exe
-
-# Ignore backup files
-*~
+*.workspace
+*.settings/
+# Ignore temporary files
+*.tmp
+# Ignore other files you don't want to track
+*.log
+*.DS_Store
