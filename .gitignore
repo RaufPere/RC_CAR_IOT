@@ -1,15 +1,23 @@
+# Ignore the .git directory (already ignored by Git)
+.git/
+
 # Ignore build output
 /build/
+
 # Ignore ModusToolbox workspace files
 /.mtb/
+
 # Ignore IDE specific files
 *.swp
 *.swo
 *.user
 *.workspace
 *.settings/
+
 # Ignore temporary files
 *.tmp
+
 # Ignore other files you don't want to track
 *.log
 *.DS_Store
+
