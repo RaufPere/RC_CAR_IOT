@@ -1,40 +1,3 @@
-# Ignore build artifacts
-build/
-GeneratedSource/
-cy_output/
-
-# Ignore configuration files
-*.launch
-*.log
-
-# Ignore dependency and output files
-libs/
-deps/
-source/generated/
-
-# Ignore IDE-specific files
-.cproject
-.project
-.settings/
-
-# Ignore temporary files and directories
-*.bak
-*.swp
-*.tmp
-*.user
-*.opsettings
-
-# Ignore object and executable files
-*.o
-*.elf
-*.map
-*.hex
-*.bin
-*.a
-*.exe
-
-# Ignore backup files
-*~
 # This list of files to ignore includes common, tool- or user-specific files that
 # are typically not checked into a version control system (VCS). It is a superset
 # of such files. You may want to add others, especially if you use a tool not listed
@@ -47,8 +10,8 @@ source/generated/
 # ModusToolbox library repos or information about library dependencies
 libs/
 
-# Uncomment below line if you want to lock the library versions for your application
-# !locking_commit.log
+# Uncomment below line if you don't want to lock the library versions for your application
+# assetlocks.json
 
 # ModusToolbox Configurator generated code and lock file
 GeneratedSource/
@@ -75,11 +38,7 @@ makefile.init
 # Visual Studio Code
 openocd.tcl
 .vscode/
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-# *.code-workspace
+*.code-workspace
 
 # IAR Embedded Workbench files
 
