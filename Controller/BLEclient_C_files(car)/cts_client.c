@@ -444,5 +444,5 @@ static wiced_bt_gatt_status_t ble_app_write_notification_cccd(bool notify)
 
 static void print_notification_data(wiced_bt_gatt_data_t notif_data)
 {
-	printf("data: %d\n\r", notif_data.p_data[0]);
+	printf("X: %d - Y: %d\n\r", notif_data.p_data[0], notif_data.p_data[0]);
 }

@@ -519,10 +519,11 @@ static void ctss_send_notification(void)
 
     // ***DATA TO BE SENT***
     app_cts_current_time[0] = 'a';
+    app_cts_current_time[1] = 'c';
 
     status = wiced_bt_gatt_server_send_notification(bt_connection_id,
                                                     HDLC_CTS_CURRENT_TIME_VALUE,
-                                                    1,
+                                                    2,
                                                     app_cts_current_time,NULL);
 
     if (WICED_BT_GATT_SUCCESS != status)
@@ -531,7 +532,7 @@ static void ctss_send_notification(void)
     }
     else
     {
-    	printf("Succesfully sent data: %d\n\r",app_cts_current_time[0]);
+    	printf("Succesfully sent X: %d - Y: %d\n\r",app_cts_current_time[0], app_cts_current_time[1]);
     }
 }
 
