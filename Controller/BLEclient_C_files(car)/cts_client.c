@@ -358,6 +358,7 @@ ble_app_discovery_result_handler(wiced_bt_gatt_discovery_result_t *discovery_res
                 printf("Current Time CCCD found, Handle = %d\n",
                         cts_discovery_data.cts_cccd_handle);
                 printf("Press User button to start data communication\n");
+                cyhal_gpio_write(P13_7, 0);
             }
             break;
 
