@@ -22,7 +22,6 @@ static bool                        button_press_for_adv = true;
 
 static void ble_app_init(void);
 static void print_notification_data(wiced_bt_gatt_data_t notif_data);
-const  char* get_day_of_week(uint8_t day);
 static void button_interrupt_handler(void *handler_arg, cyhal_gpio_event_t event);
 static wiced_bt_gatt_status_t ble_app_write_notification_cccd(bool notify);
 
@@ -137,7 +136,10 @@ static void ble_app_init(void)
     gatt_status = wiced_bt_gatt_db_init(gatt_database, gatt_database_len, NULL);
     printf("GATT database initialization status: %s \n",
             get_bt_gatt_status_name(gatt_status));
-    printf("Press User button to start advertising.....\n");
+    BaseType_t xHigherPriorityTaskWoken;
+	xHigherPriorityTaskWoken = pdFALSE;
+	vTaskNotifyGiveFromISR(button_task_handle, &xHigherPriorityTaskWoken);
+	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
 }
 
 void button_interrupt_handler(void *handler_arg, cyhal_gpio_event_t event)
@@ -355,8 +357,7 @@ ble_app_discovery_result_handler(wiced_bt_gatt_discovery_result_t *discovery_res
                 cts_discovery_data.cts_service_found = true;
                 printf("Current Time CCCD found, Handle = %d\n",
                         cts_discovery_data.cts_cccd_handle);
-                printf("Press User button on the kit to enable or disable "
-                        "notifications \n");
+                printf("Press User button to start data communication\n");
             }
             break;
 
@@ -426,11 +427,16 @@ static wiced_bt_gatt_status_t ble_app_write_notification_cccd(bool notify)
         write_hdr.handle = cts_discovery_data.cts_cccd_handle;
         write_hdr.len      = LEN_UUID_16;
         write_hdr.offset = 0;
-        gatt_status = wiced_bt_gatt_client_send_write(bt_connection_id,
-                                                      GATT_REQ_WRITE,
-                                                      &write_hdr,
-                                                      notif_val,
-                                                      NULL);
+
+        for (;;)
+        {
+			gatt_status = wiced_bt_gatt_client_send_write(bt_connection_id,
+														  GATT_REQ_WRITE,
+														  &write_hdr,
+														  notif_val,
+														  NULL);
+			vTaskDelay(pdMS_TO_TICKS(1000));
+        }
     }
     return gatt_status;
 }
