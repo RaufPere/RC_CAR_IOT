@@ -24,7 +24,6 @@ cyhal_rtc_t my_rtc;
 *******************************************************************************/
 static void           ble_app_init                (void);
 static void           ctss_send_notification      (void);
-static int            get_day_of_week             (int day, int month, int year);
 static void           ctss_scan_result_cback      (wiced_bt_ble_scan_results_t *p_scan_result,
                                                    uint8_t *p_adv_data );
 
@@ -52,17 +51,6 @@ static wiced_bt_gatt_status_t app_bt_gatt_req_read_by_type_handler(uint16_t conn
 static void* app_alloc_buffer(int len);
 static void app_free_buffer(uint8_t *p_event_data);
 gatt_db_lookup_table_t* app_get_attribute(uint16_t handle);
-void connected();
-
-void connected()
-{
-	for (;;)
-	{
-		printf("Server Connected!!\r\n");
-		//wiced_bt_gatt_server_send_write_rsp(bt_connection_id, GATT_REQ_WRITE, handle);
-		vTaskDelay(pdMS_TO_TICKS(1000));
-	}
-}
 
 wiced_result_t app_bt_management_callback(wiced_bt_management_evt_t event,
                                           wiced_bt_management_evt_data_t *p_event_data)
@@ -210,21 +198,6 @@ void ctss_scan_result_cback(wiced_bt_ble_scan_results_t *p_scan_result,
     }
 }
 
-/********************************************************************************
-* Function Name: ble_app_gatt_event_callback
-*********************************************************************************
-* Summary:
-*   This function handles GATT events from the BT stack.
-*
-* Parameters:
-*   wiced_bt_gatt_evt_t event                   : BLE GATT event code of one byte length
-*   wiced_bt_gatt_event_data_t *p_event_data    : Pointer to BLE GATT event structures
-*
-* Return:
-*  wiced_bt_gatt_status_t: See possible status codes in wiced_bt_gatt_status_e
-*                          in wiced_bt_gatt.h
-*
-*********************************************************************************/
 static wiced_bt_gatt_status_t ble_app_gatt_event_callback (wiced_bt_gatt_evt_t event,
                                                            wiced_bt_gatt_event_data_t *p_event_data)
 {
@@ -244,7 +217,6 @@ static wiced_bt_gatt_status_t ble_app_gatt_event_callback (wiced_bt_gatt_evt_t e
             break;
 
         case GATT_ATTRIBUTE_REQUEST_EVT:
-        	printf("testttttt\r\n");
             gatt_status = ble_app_server_handler(&p_event_data->attribute_request, 
                                                  &error_handle);
             if(gatt_status != WICED_BT_GATT_SUCCESS)
@@ -264,22 +236,7 @@ static wiced_bt_gatt_status_t ble_app_gatt_event_callback (wiced_bt_gatt_evt_t e
 
     return gatt_status;
 }
-/********************************************************************************
-* Function Name: ble_app_write_handler
-*********************************************************************************
-* Summary:
-*   This function handles Write Requests received from the client device
-*
-* Parameters:
-*  uint16_t conn_id: Connection ID
-*  wiced_bt_gatt_opcode_t opcode: GATT opcode
-*  wiced_bt_gatt_write_t * p_data: Write data structure
-*
-* Return:
-*  wiced_bt_gatt_status_t: See possible status codes in wiced_bt_gatt_status_e
-*                          in wiced_bt_gatt.h
-*
-*********************************************************************************/
+
 static wiced_bt_gatt_status_t ble_app_write_handler(uint16_t conn_id,
                                                     wiced_bt_gatt_opcode_t opcode,
                                                     wiced_bt_gatt_write_req_t *p_data, 
@@ -330,23 +287,6 @@ static wiced_bt_gatt_status_t ble_app_write_handler(uint16_t conn_id,
     return gatt_status;
 }
 
-/*******************************************************************************
-* Function Name: ble_app_read_handler
-********************************************************************************
-* Summary:
-*   This function handles Read Requests received from the client device
-*
-* Parameters:
-*  uint16_t conn_id: Connection ID
-*  wiced_bt_gatt_opcode_t opcode: GATT opcode
-*  wiced_bt_gatt_read_t * p_read_data: Read data structure
-*  uint16_t len_requested: Length requested
-*
-* Return:
-*  wiced_bt_gatt_status_t: See possible status codes in wiced_bt_gatt_status_e
-*                          in wiced_bt_gatt.h
-*
-*********************************************************************************/
 static wiced_bt_gatt_status_t ble_app_read_handler( uint16_t conn_id,
                                                     wiced_bt_gatt_opcode_t opcode,
                                                     wiced_bt_gatt_read_t *p_read_data,
@@ -384,22 +324,7 @@ static wiced_bt_gatt_status_t ble_app_read_handler( uint16_t conn_id,
     gatt_status = wiced_bt_gatt_server_send_read_handle_rsp(conn_id, opcode, to_send, from, NULL);
     return gatt_status;
 }
-/*******************************************************************************
-* Function Name: app_gatt_read_by_type_handler
-********************************************************************************
-* Summary:
-* This function handles the GATT read by type request events from the stack
-*
-* Parameters:
-*  uint16_t conn_id: Connection ID
-*  wiced_bt_gatt_opcode_t opcode: GATT opcode
-*  wiced_bt_gatt_read_by_type_t * p_read_data: Read data structure
-*  uint16_t len_requested: Length requested
-*
-* Return:
-*  wiced_bt_gatt_status_t: GATT result
-*
-*******************************************************************************/
+
 static wiced_bt_gatt_status_t app_bt_gatt_req_read_by_type_handler(uint16_t conn_id,
                                                                    wiced_bt_gatt_opcode_t opcode,
                                                                    wiced_bt_gatt_read_by_type_t *p_read_req,
@@ -483,21 +408,7 @@ static wiced_bt_gatt_status_t app_bt_gatt_req_read_by_type_handler(uint16_t conn
 
     return gatt_status;
 }
-/*******************************************************************************
-* Function Name: ble_app_connect_handler
-*********************************************************************************
-* Summary:
-*   This callback function handles connection status changes.
-*
-* Parameters:
-*   wiced_bt_gatt_connection_status_t *p_conn_status  : Pointer to data that has
-*                                                       connection details
-*
-* Return:
-*  wiced_bt_gatt_status_t: See possible status codes in wiced_bt_gatt_status_e
-*                                in wiced_bt_gatt.h
-*
-*********************************************************************************/
+
 static wiced_bt_gatt_status_t ble_app_connect_handler (wiced_bt_gatt_connection_status_t *p_conn_status)
 {
     wiced_bt_gatt_status_t status = WICED_BT_GATT_SUCCESS;
@@ -550,20 +461,6 @@ static wiced_bt_gatt_status_t ble_app_connect_handler (wiced_bt_gatt_connection_
     return status;
 }
 
-/********************************************************************************
-* Function Name: ble_app_server_handler
-*********************************************************************************
-* Summary:
-*   This function handles GATT server events from the BT stack.
-*
-* Parameters:
-*  wiced_bt_gatt_attribute_request_t *p_data: GATT request data structure
-*
-* Return:
-*  wiced_bt_gatt_status_t: See possible status codes in wiced_bt_gatt_status_e
-*                          in wiced_bt_gatt.h
-*
-*********************************************************************************/
 static wiced_bt_gatt_status_t ble_app_server_handler (wiced_bt_gatt_attribute_request_t *p_data, uint16_t *p_error_handle)
 {
     wiced_bt_gatt_status_t status = WICED_BT_GATT_SUCCESS;
@@ -608,6 +505,7 @@ static wiced_bt_gatt_status_t ble_app_server_handler (wiced_bt_gatt_attribute_re
     return status;
 }
 
+// ***DATA SEND FUNCTION***
 static void ctss_send_notification(void)
 {
     cy_rslt_t  cy_result;
@@ -616,33 +514,24 @@ static void ctss_send_notification(void)
     wiced_bt_gatt_status_t status = WICED_BT_GATT_SUCCESS;
 
     cy_result = cyhal_rtc_read(&my_rtc, &date_time);
-    if (CY_RSLT_SUCCESS ==  cy_result)
-    {
-        strftime(buffer, sizeof(buffer), "%c", &date_time);
-        printf("\r%s\r\n\n", buffer);
-    }
 
     date_time.tm_year += TM_YEAR_BASE;
-    app_cts_current_time[0]= (uint8_t) (date_time.tm_year & 0xFF);
-    app_cts_current_time[1]= (uint8_t) ((date_time.tm_year) >> 8);
-    app_cts_current_time[2] = date_time.tm_mon + 1;
-    app_cts_current_time[3] = date_time.tm_mday;
-    app_cts_current_time[4] = date_time.tm_hour;
-    app_cts_current_time[5] = date_time.tm_min;
-    app_cts_current_time[6] = date_time.tm_sec;
-    app_cts_current_time[7] = get_day_of_week(date_time.tm_mday, date_time.tm_mon,
-                                              date_time.tm_year);
-    app_cts_current_time[8] = 0;
-    app_cts_current_time[9] = 0;
+
+    // ***DATA TO BE SENT***
+    app_cts_current_time[0] = 'a';
 
     status = wiced_bt_gatt_server_send_notification(bt_connection_id,
                                                     HDLC_CTS_CURRENT_TIME_VALUE,
-                                                    app_cts_current_time_len,
+                                                    1,
                                                     app_cts_current_time,NULL);
 
     if (WICED_BT_GATT_SUCCESS != status)
     {
         printf("Send notification failed\n");
+    }
+    else
+    {
+    	printf("Succesfully sent data: %d\n\r",app_cts_current_time[0]);
     }
 }
 
@@ -665,67 +554,7 @@ void button_task(void *pvParameters)
         }
     }
 }
-/*******************************************************************************
-* Function Name: get_day_of_week
-********************************************************************************
-* Summary:
-*  Returns a day of the week for a year, month, and day of month that are passed
-*  through parameters. Zeller's congruence is used to calculate the day of
-*  the week. See https://en.wikipedia.org/wiki/Zeller%27s_congruence for more
-*  details.
-*
-*  Note: In this algorithm January and February are counted as months 13 and 14
-*  of the previous year.
-*
-* Parameter:
-*  int day          : The day of the month, Valid range 1..31.
-*  int month        : The month of the year
-*  int year         : The year value. Valid range non-zero value.
-*
-* Return:
-*  Returns a day of the week (1 = Monday, 2 = Tuesday, ., 7 = Sunnday)
-*
-*******************************************************************************/
-static int get_day_of_week(int day, int month, int year)
-{
-    int ret;
 
-    /*Adding 1 to start the index of month from 1. (1-Jan, 2-Feb, ..., 12-Dec)*/
-    month+=1;
-
-    if (month == 1)
-    {
-        month = 13;
-        year--;
-    }
-    if (month == 2)
-    {
-        month = 14;
-        year--;
-    }
-
-    int i = 13*(month+1)/5;
-    int k = year % 100;
-    int j = year / 100;
-
-    ret = (((day + i + k + k/4 + j/4 + 5*j) + 5) % DAYS_PER_WEEK) + 1;
-
-    return ret;
-}
-/*******************************************************************************
-* Function Name: app_get_attribute
-********************************************************************************
-* Summary:
-* This function searches through the GATT DB to point to the attribute
-* corresponding to the given handle
-*
-* Parameters:
-*  uint16_t handle: Handle to search for in the GATT DB
-*
-* Return:
-*  gatt_db_lookup_table_t *: Pointer to the correct attribute in the GATT DB
-*
-*******************************************************************************/
 gatt_db_lookup_table_t *app_get_attribute(uint16_t handle)
 {
     /* Search for the given handle in the GATT DB and return the pointer to the
@@ -742,33 +571,11 @@ gatt_db_lookup_table_t *app_get_attribute(uint16_t handle)
     return NULL;
 }
 
-/*******************************************************************************
- * Function Name: app_free_buffer
- *******************************************************************************
- * Summary:
- *  This function frees up the memory buffer
- *
- *
- * Parameters:
- *  uint8_t *p_data: Pointer to the buffer to be free
- *
- ******************************************************************************/
 static void app_free_buffer(uint8_t *p_buf)
 {
     vPortFree(p_buf);
 }
 
-/*******************************************************************************
- * Function Name: app_alloc_buffer
- *******************************************************************************
- * Summary:
- *  This function allocates a memory buffer.
- *
- *
- * Parameters:
- *  int len: Length to allocate
- *
- ******************************************************************************/
 static void* app_alloc_buffer(int len)
 {
     return pvPortMalloc(len);

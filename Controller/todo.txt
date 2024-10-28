@@ -1,2 +1,0 @@
-de server herkent de write request niet. Ik moet kijken naar de originile code welke soort GATT request er gebruikt wordt om die datums door te sturen. 
-Server code is oke ik moet daar gewoon in ble_app_gatt_event_callback binnen GATT_ATTRIBUTE_REQUEST_EVT kunnen geraken om de request te handelen.

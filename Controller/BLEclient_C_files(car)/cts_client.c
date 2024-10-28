@@ -15,9 +15,17 @@
 #include "wiced_bt_uuid.h"
 #include "wiced_bt_types.h"
 
-void connected(void);
+static uint16_t                    bt_connection_id = 0;
+static cts_discovery_data_t        cts_discovery_data;
+static bool                        notify_val = false;
+static bool                        button_press_for_adv = true;
+
 static void ble_app_init(void);
-void button_interrupt_handler(void);
+static void print_notification_data(wiced_bt_gatt_data_t notif_data);
+const  char* get_day_of_week(uint8_t day);
+static void button_interrupt_handler(void *handler_arg, cyhal_gpio_event_t event);
+static wiced_bt_gatt_status_t ble_app_write_notification_cccd(bool notify);
+
 /* GATT Event Callback Functions */
 static wiced_bt_gatt_status_t ble_app_connect_handler(wiced_bt_gatt_connection_status_t *p_conn_status);
 static wiced_bt_gatt_status_t ble_app_gatt_event_callback(wiced_bt_gatt_evt_t  event,
@@ -25,45 +33,12 @@ static wiced_bt_gatt_status_t ble_app_gatt_event_callback(wiced_bt_gatt_evt_t  e
 static wiced_bt_gatt_status_t  ble_app_service_discovery_handler(wiced_bt_gatt_discovery_complete_t *discovery_complete);
 static wiced_bt_gatt_status_t  ble_app_discovery_result_handler(wiced_bt_gatt_discovery_result_t *discovery_result);
 
-static uint16_t                    bt_connection_id = 0;
-static bool                        button_press_for_adv = true;
-static cts_discovery_data_t        cts_discovery_data;
-static bool                        notify_val = false;
-
 /* Configure GPIO interrupt. */
 cyhal_gpio_callback_data_t button_cb_data =
 {
 .callback = button_interrupt_handler,
 .callback_arg = NULL
 };
-
-char dataToSend = 'a';
-
-void button_interrupt_handler()
-{
-
-}
-
-void connected(void)
-{
-    wiced_bt_gatt_write_hdr_t  write_hdr = {0};
-    uint8_t * notif_val = 65;
-
-	for (;;)
-	{
-		printf("Connected!!\r\n");
-
-		wiced_bt_gatt_status_t status = wiced_bt_gatt_client_send_write(bt_connection_id,
-									  GATT_REQ_WRITE,
-									  &write_hdr,
-									  notif_val,
-									  NULL);
-
-		printf("Send status: 0x%X\r\n", status);
-
-		vTaskDelay(pdMS_TO_TICKS(1000));
-	}
-}
 
 wiced_result_t app_bt_management_callback(wiced_bt_management_evt_t event,
                                           wiced_bt_management_evt_data_t *p_event_data)
@@ -134,12 +109,20 @@ static void ble_app_init(void)
     printf("**Discover device with \"CTS Client\" name*\n");
     printf("***********************************************\n\n");
 
-    cyhal_gpio_init(CYBSP_USER_BTN, CYHAL_GPIO_DIR_INPUT,
-                                    CYHAL_GPIO_DRIVE_PULLUP, CYBSP_BTN_OFF);
+    /* Initialize GPIO for button interrupt*/
+    cy_result = cyhal_gpio_init(CYBSP_USER_BTN, CYHAL_GPIO_DIR_INPUT,
+                                CYHAL_GPIO_DRIVE_PULLUP, CYBSP_BTN_OFF);
+    /* GPIO init failed. Stop program execution */
+    if (CY_RSLT_SUCCESS !=  cy_result)
+    {
+        printf("Button GPIO init failed! \n");
+        CY_ASSERT(0);
+    }
 
+    /* Configure GPIO interrupt. */
     cyhal_gpio_register_callback(CYBSP_USER_BTN,&button_cb_data);
     cyhal_gpio_enable_event(CYBSP_USER_BTN, CYHAL_GPIO_IRQ_FALL,
-                                BUTTON_INTERRUPT_PRIORITY, true);
+                            BUTTON_INTERRUPT_PRIORITY, true);
 
     /* Set Advertisement Data */
     wiced_bt_ble_set_raw_advertisement_data(CY_BT_ADV_PACKET_DATA_SIZE,
@@ -154,12 +137,16 @@ static void ble_app_init(void)
     gatt_status = wiced_bt_gatt_db_init(gatt_database, gatt_database_len, NULL);
     printf("GATT database initialization status: %s \n",
             get_bt_gatt_status_name(gatt_status));
-    BaseType_t xHigherPriorityTaskWoken;
-	xHigherPriorityTaskWoken = pdFALSE;
-	vTaskNotifyGiveFromISR(button_task_handle, &xHigherPriorityTaskWoken);
-	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+    printf("Press User button to start advertising.....\n");
 }
 
+void button_interrupt_handler(void *handler_arg, cyhal_gpio_event_t event)
+{
+    BaseType_t xHigherPriorityTaskWoken;
+    xHigherPriorityTaskWoken = pdFALSE;
+    vTaskNotifyGiveFromISR(button_task_handle, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+}
 
 void button_task(void *pvParameters)
 {
@@ -177,6 +164,20 @@ void button_task(void *pvParameters)
             {
                 printf("Failed to start advertisement! Error code: %X \n",
                        wiced_result);
+            }
+        }
+        else
+        {
+            if((cts_discovery_data.cts_service_found == true) && (bt_connection_id != 0))
+            {
+                /* Toggle the flag to enable/disable CCCD based on previous state */
+                notify_val = !notify_val;
+                gatt_status = ble_app_write_notification_cccd(notify_val);
+                if(WICED_BT_GATT_SUCCESS != gatt_status)
+                {
+                    printf("Enable/Disable notification failed! Error code: %X \n"
+                           ,gatt_status);
+                }
             }
         }
     }
@@ -230,6 +231,8 @@ ble_app_gatt_event_callback(wiced_bt_gatt_evt_t event,
                     break;
 
                 case GATTC_OPTYPE_NOTIFICATION:
+                    /* Function call to print the time and date notifcation */
+                    print_notification_data(p_event_data->operation_complete.response_data.att_value);
                     break;
             }
             break;
@@ -354,7 +357,6 @@ ble_app_discovery_result_handler(wiced_bt_gatt_discovery_result_t *discovery_res
                         cts_discovery_data.cts_cccd_handle);
                 printf("Press User button on the kit to enable or disable "
                         "notifications \n");
-                connected();
             }
             break;
 
@@ -407,6 +409,33 @@ ble_app_service_discovery_handler(wiced_bt_gatt_discovery_complete_t *discovery_
     return gatt_status;
 }
 
+// ***REQUEST SERVER FOR DATA***
+static wiced_bt_gatt_status_t ble_app_write_notification_cccd(bool notify)
+{
+    wiced_bt_gatt_write_hdr_t  write_hdr = {0};
+    wiced_bt_gatt_status_t     gatt_status = WICED_BT_GATT_SUCCESS;
+    uint8_t * notif_val = NULL;
 
+    /* Allocate memory for data to be written on server DB and pass it to stack*/
+    notif_val = pvPortMalloc(sizeof(uint16_t)); //CCCD is two bytes
+    if (notif_val)
+    {
+        notif_val[0] = notify;
+        notif_val[1] = 0;
+        write_hdr.auth_req = GATT_AUTH_REQ_NONE;
+        write_hdr.handle = cts_discovery_data.cts_cccd_handle;
+        write_hdr.len      = LEN_UUID_16;
+        write_hdr.offset = 0;
+        gatt_status = wiced_bt_gatt_client_send_write(bt_connection_id,
+                                                      GATT_REQ_WRITE,
+                                                      &write_hdr,
+                                                      notif_val,
+                                                      NULL);
+    }
+    return gatt_status;
+}
 
-
+static void print_notification_data(wiced_bt_gatt_data_t notif_data)
+{
+	printf("data: %d\n\r", notif_data.p_data[0]);
+}
