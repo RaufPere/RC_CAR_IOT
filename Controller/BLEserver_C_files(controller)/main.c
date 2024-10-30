@@ -12,17 +12,87 @@ volatile int uxTopUsedPriority;
 
 TaskHandle_t  button_task_handle;
 
+// ADC pin defines
 #define ADC_PIN P10_0 //P10_2
 #define ADC_PIN_2 P10_1 //P10_4
 
+// 7 segment display connections
+#define S_A P9_0
+#define S_B P9_1
+#define S_C P9_2
+#define S_D P9_3
+#define S_E P9_4
+#define S_F P9_5
+#define S_G P9_6
+
+#define S2_A P5_2
+#define S2_B P5_3
+#define S2_C P5_4
+#define S2_D P5_5
+#define S2_E P5_6
+#define S2_F P13_0
+#define S2_G P13_1
+
+// ADC objects
 cyhal_adc_t adcObj;
 cyhal_adc_channel_t adc_chan_0_obj;
-
 cyhal_adc_channel_t adc_chan_0_obj1;
 
+// Task and queue handles
 TaskHandle_t joystickHandle;
+TaskHandle_t sevenSegmentHandle;
 
 QueueHandle_t JoystickDataQueue;
+
+void DriveSevenSegments()
+{
+	// Array for segments (A-G) for each digit (0-9)
+	const uint8_t digits[10] = {
+	    0b00111111, // 0
+	    0b00000110, // 1
+	    0b01011011, // 2
+	    0b01001111, // 3
+	    0b01100110, // 4
+	    0b01101101, // 5
+	    0b01111101, // 6
+	    0b00000111, // 7
+	    0b01111111, // 8
+	    0b01101111  // 9
+	};
+
+	int speed = 0;
+	for (;;)
+	{
+		// ***Receive speed from a queue***
+
+		if (speed > 99)
+		{
+			speed = 99;
+		}
+
+		int tens = speed / 10;
+		int units = speed % 10;
+
+		// Set segments for the tens digit on display 1
+		cyhal_gpio_write(S_A, (digits[tens] & 0b00000001) ? 1 : 0);
+		cyhal_gpio_write(S_B, (digits[tens] & 0b00000010) ? 1 : 0);
+		cyhal_gpio_write(S_C, (digits[tens] & 0b00000100) ? 1 : 0);
+		cyhal_gpio_write(S_D, (digits[tens] & 0b00001000) ? 1 : 0);
+		cyhal_gpio_write(S_E, (digits[tens] & 0b00010000) ? 1 : 0);
+		cyhal_gpio_write(S_F, (digits[tens] & 0b00100000) ? 1 : 0);
+		cyhal_gpio_write(S_G, (digits[tens] & 0b01000000) ? 1 : 0);
+
+		// Set segments for the units digit on display 2
+		cyhal_gpio_write(S2_A, (digits[units] & 0b00000001) ? 1 : 0);
+		cyhal_gpio_write(S2_B, (digits[units] & 0b00000010) ? 1 : 0);
+		cyhal_gpio_write(S2_C, (digits[units] & 0b00000100) ? 1 : 0);
+		cyhal_gpio_write(S2_D, (digits[units] & 0b00001000) ? 1 : 0);
+		cyhal_gpio_write(S2_E, (digits[units] & 0b00010000) ? 1 : 0);
+		cyhal_gpio_write(S2_F, (digits[units] & 0b00100000) ? 1 : 0);
+		cyhal_gpio_write(S2_G, (digits[units] & 0b01000000) ? 1 : 0);
+	}
+}
+
 
 void JoyStickTask(void * parameters)
 {
@@ -74,6 +144,27 @@ void initADC()
 	}
 }
 
+void initGPIOs()
+{
+	cy_rslt_t result;
+
+	result = cyhal_gpio_init(S_A, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 0);
+	result = cyhal_gpio_init(S_B, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 0);
+	result = cyhal_gpio_init(S_C, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 0);
+	result = cyhal_gpio_init(S_D, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 0);
+	result = cyhal_gpio_init(S_E, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 0);
+	result = cyhal_gpio_init(S_F, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 0);
+	result = cyhal_gpio_init(S_G, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 0);
+
+	result = cyhal_gpio_init(S2_A, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 0);
+	result = cyhal_gpio_init(S2_B, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 0);
+	result = cyhal_gpio_init(S2_C, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 0);
+	result = cyhal_gpio_init(S2_D, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 0);
+	result = cyhal_gpio_init(S2_E, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 0);
+	result = cyhal_gpio_init(S2_F, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 0);
+	result = cyhal_gpio_init(S2_G, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 0);
+}
+
 int main()
 {
     cy_rslt_t rslt;
@@ -94,6 +185,7 @@ int main()
     JoystickDataQueue = xQueueCreate(1,sizeof(JoystickData));
 
     initADC();
+    initGPIOs();
 
     /* Enable global interrupts */
     __enable_irq();
@@ -138,6 +230,14 @@ int main()
 	if( pdPASS != rtos_result)
 	{
 		printf("Failed to create joystick task! \n");
+		CY_ASSERT(0);
+	}
+
+	/* Create Button Task for processing button presses */
+	rtos_result = xTaskCreate(DriveSevenSegments, "7segment", configMINIMAL_STACK_SIZE, NULL, BUTTON_TASK_PRIORITY, &sevenSegmentHandle);
+	if( pdPASS != rtos_result)
+	{
+		printf("Failed to create sevensegment task! \n");
 		CY_ASSERT(0);
 	}
 
