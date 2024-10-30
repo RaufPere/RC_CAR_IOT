@@ -358,7 +358,7 @@ ble_app_discovery_result_handler(wiced_bt_gatt_discovery_result_t *discovery_res
                 printf("Current Time CCCD found, Handle = %d\n",
                         cts_discovery_data.cts_cccd_handle);
                 printf("Press User button to start data communication\n");
-                cyhal_gpio_write(P13_7, 0);
+                cyhal_gpio_write(LED_PIN, 0);
             }
             break;
 
@@ -444,5 +444,5 @@ static wiced_bt_gatt_status_t ble_app_write_notification_cccd(bool notify)
 
 static void print_notification_data(wiced_bt_gatt_data_t notif_data)
 {
-	printf("X: %d - Y: %d\n\r", notif_data.p_data[0], notif_data.p_data[0]);
+	printf("X: %d - Y: %d\n\r", notif_data.p_data[0], notif_data.p_data[1]);
 }

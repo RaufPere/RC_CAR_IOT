@@ -1,51 +1,3 @@
-/******************************************************************************
-* File Name: main.c
-*
-* Description: CTS Server app implements a Bluetooth LE GAP Central and a
-*              GATT Server which works with AnyCloud CTS Client CE. This file
-*              contains the main function which initializes the BSP, Debug UART
-*              port and Bluetooth stack. It creates a FreeRTOS task to handle
-*              button press.
-*
-* Related Document: See README.md
-*
-*******************************************************************************
-* Copyright 2020-2024, Cypress Semiconductor Corporation (an Infineon company) or
-* an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
-*
-* This software, including source code, documentation and related
-* materials ("Software") is owned by Cypress Semiconductor Corporation
-* or one of its affiliates ("Cypress") and is protected by and subject to
-* worldwide patent protection (United States and foreign),
-* United States copyright laws and international treaty provisions.
-* Therefore, you may use this Software only as provided in the license
-* agreement accompanying the software package from which you
-* obtained this Software ("EULA").
-* If no EULA applies, Cypress hereby grants you a personal, non-exclusive,
-* non-transferable license to copy, modify, and compile the Software
-* source code solely for use in connection with Cypress's
-* integrated circuit products.  Any reproduction, modification, translation,
-* compilation, or representation of this Software except as specified
-* above is prohibited without the express written permission of Cypress.
-*
-* Disclaimer: THIS SOFTWARE IS PROVIDED AS-IS, WITH NO WARRANTY OF ANY KIND,
-* EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, NONINFRINGEMENT, IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. Cypress
-* reserves the right to make changes to the Software without notice. Cypress
-* does not assume any liability arising out of the application or use of the
-* Software or any product or circuit described in the Software. Cypress does
-* not authorize its products for use in any products where a malfunction or
-* failure of the Cypress product may reasonably be expected to result in
-* significant property damage, injury or death ("High Risk Product"). By
-* including Cypress's product in a High Risk Product, the manufacturer
-* of such system or application assumes all risk of such use and in doing
-* so agrees to indemnify Cypress against all liability.
-*******************************************************************************/
-
-/*******************************************************************************
-*        Header Files
-*******************************************************************************/
-
 #include "wiced_bt_stack.h"
 #include "cybsp.h"
 #include "cyhal.h"
@@ -56,24 +8,72 @@
 #include "cts_server.h"
 #include "cybsp_bt_config.h"
 
-/*******************************************************************************
-*        Variable Definitions
-*******************************************************************************/
-/* This enables RTOS aware debugging. */
 volatile int uxTopUsedPriority;
 
-/* FreeRTOS task handle for button task. Button task is used to start
- * advertisment or enable/disable notification from peer */
 TaskHandle_t  button_task_handle;
 
-/******************************************************************************
- *                          Function Definitions
- ******************************************************************************/
-/*
- *  Entry point to the application. Set device configuration and start BT
- *  stack initialization.  The actual application initialization will happen
- *  when stack reports that BT device is ready.
- */
+#define ADC_PIN P10_0 //P10_2
+#define ADC_PIN_2 P10_1 //P10_4
+
+cyhal_adc_t adcObj;
+cyhal_adc_channel_t adc_chan_0_obj;
+
+cyhal_adc_channel_t adc_chan_0_obj1;
+
+TaskHandle_t joystickHandle;
+
+QueueHandle_t JoystickDataQueue;
+
+void JoyStickTask(void * parameters)
+{
+	JoystickData data;
+
+	for (;;)
+	{
+		data.x = (cyhal_adc_read(&adc_chan_0_obj) + 2048) * 255 / 4096;
+
+		data.y = (cyhal_adc_read(&adc_chan_0_obj1) + 2048) * 255 / 4096;
+
+		printf("ADC value X: %d\r\n", data.x);
+		printf("ADC value Y: %d\r\n", data.y);
+
+		xQueueOverwrite(JoystickDataQueue, &data);
+
+		vTaskDelay(pdMS_TO_TICKS(1000));
+	}
+}
+
+void initADC()
+{
+	// INIT ADC for joystick
+	cy_rslt_t result = cyhal_adc_init(&adcObj, ADC_PIN, NULL);
+
+
+	if (result != CY_RSLT_SUCCESS)
+	{
+		printf("Init adc failed\r\n");
+	}
+
+	// Initialize ADC channel, allocate channel number 0 to pin ADC_VPLUS1 as this is the first
+	// channel initialized
+	const cyhal_adc_channel_config_t channel_config =
+		{ .enable_averaging = false, .min_acquisition_ns = 220, .enabled = true };
+	result = cyhal_adc_channel_init_diff(&adc_chan_0_obj, &adcObj, ADC_PIN, CYHAL_ADC_VNEG,
+									   &channel_config);
+
+	// Initialize ADC channel, allocate channel number 0 to pin ADC_VPLUS1 as this is the first
+	// channel initialized
+	const cyhal_adc_channel_config_t channel_config1 =
+		{ .enable_averaging = false, .min_acquisition_ns = 220, .enabled = true };
+	result = cyhal_adc_channel_init_diff(&adc_chan_0_obj1, &adcObj, ADC_PIN_2, CYHAL_ADC_VNEG,
+									   &channel_config1);
+
+	if (result != CY_RSLT_SUCCESS)
+	{
+		printf("Init adc channel failed 2\r\n");
+	}
+}
+
 int main()
 {
     cy_rslt_t rslt;
@@ -90,6 +90,10 @@ int main()
     {
         CY_ASSERT(0);
     }
+
+    JoystickDataQueue = xQueueCreate(1,sizeof(JoystickData));
+
+    initADC();
 
     /* Enable global interrupts */
     __enable_irq();
@@ -128,6 +132,14 @@ int main()
         printf("Failed to create Button task! \n");
         CY_ASSERT(0);
     }
+
+    /* Create Button Task for processing button presses */
+	rtos_result = xTaskCreate(JoyStickTask, "joystick readout", configMINIMAL_STACK_SIZE, NULL, BUTTON_TASK_PRIORITY, &joystickHandle);
+	if( pdPASS != rtos_result)
+	{
+		printf("Failed to create joystick task! \n");
+		CY_ASSERT(0);
+	}
 
     /* Start the FreeRTOS scheduler */
     vTaskStartScheduler();

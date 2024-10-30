@@ -36,7 +36,7 @@ int main()
     cy_retarget_io_init(CYBSP_DEBUG_UART_TX, CYBSP_DEBUG_UART_RX,
                         CY_RETARGET_IO_BAUDRATE);
 
-    cyhal_gpio_init(P13_7, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 1);
+    cyhal_gpio_init(LED_PIN, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 1);
 
     printf("**********************AnyCloud Example*************************\n");
     printf("**** Current Time Service (CTS) - Client Application Start ****\n");
@@ -61,7 +61,7 @@ int main()
     }
 
     /* Create Button Task for processing button presses */
-     rtos_result = xTaskCreate(button_task,"button_task", BUTTON_TASK_STACK_SIZE,
+    rtos_result = xTaskCreate(button_task,"button_task", BUTTON_TASK_STACK_SIZE,
                                NULL, BUTTON_TASK_PRIORITY, &button_task_handle);
     if( pdPASS != rtos_result)
     {

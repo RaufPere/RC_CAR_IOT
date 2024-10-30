@@ -55,6 +55,8 @@
 #define BUTTON_TASK_PRIORITY            (configMAX_PRIORITIES - 1)
 #define BUTTON_TASK_STACK_SIZE          (configMINIMAL_STACK_SIZE * 8)
 
+#define LED_PIN P13_7
+
 /*******************************************************************************
 *        Enumerations
 *******************************************************************************/

@@ -508,18 +508,16 @@ static wiced_bt_gatt_status_t ble_app_server_handler (wiced_bt_gatt_attribute_re
 // ***DATA SEND FUNCTION***
 static void ctss_send_notification(void)
 {
-    cy_rslt_t  cy_result;
-    struct tm date_time;
-    char buffer[STRING_BUFFER_SIZE];
     wiced_bt_gatt_status_t status = WICED_BT_GATT_SUCCESS;
 
-    cy_result = cyhal_rtc_read(&my_rtc, &date_time);
+    JoystickData data;
+    xQueueReceive(JoystickDataQueue, &data, portMAX_DELAY);
 
-    date_time.tm_year += TM_YEAR_BASE;
+    printf("Queue received data %ld, %ld\n\r", data.x, data.y);
 
     // ***DATA TO BE SENT***
-    app_cts_current_time[0] = 'a';
-    app_cts_current_time[1] = 'c';
+    app_cts_current_time[0] = data.x;
+    app_cts_current_time[1] = data.y;
 
     status = wiced_bt_gatt_server_send_notification(bt_connection_id,
                                                     HDLC_CTS_CURRENT_TIME_VALUE,
@@ -532,7 +530,7 @@ static void ctss_send_notification(void)
     }
     else
     {
-    	printf("Succesfully sent X: %d - Y: %d\n\r",app_cts_current_time[0], app_cts_current_time[1]);
+    	printf("Succesfully sent X: %ld - Y: %ld\n\r",app_cts_current_time[0], app_cts_current_time[1]);
     }
 }
 
