@@ -86,6 +86,15 @@ int main()
         printf("Failed to create Button task! \n");
         CY_ASSERT(0);
     }
+
+    /* Create the BLE Client task. */
+        rtos_result = xTaskCreate(BLE_client_task, "MQTT Client task", MQTT_CLIENT_TASK_STACK_SIZE,
+                    NULL, MQTT_CLIENT_TASK_PRIORITY, NULL);
+        if( pdPASS != rtos_result)
+        {
+            printf("Failed to create Button task! \n");
+            CY_ASSERT(0);
+        }
     /* Start the FreeRTOS scheduler. */
     vTaskStartScheduler();
 
