@@ -289,7 +289,7 @@ static void publisher_deinit(void)
 
 
 	// Deinit the I2CBUS
-	    I2C_PDL_Deinit();
+	I2C_PDL_Deinit();
 }
 
 /*******************************************************************************

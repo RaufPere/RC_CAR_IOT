@@ -8,6 +8,10 @@
         "locked-commit": "release-v2.5.0"
     },
     {
+        "asset-name": "btstack",
+        "locked-commit": "release-v3.9.2"
+    },
+    {
         "asset-name": "cat1cm0p",
         "locked-commit": "release-v1.7.0"
     },

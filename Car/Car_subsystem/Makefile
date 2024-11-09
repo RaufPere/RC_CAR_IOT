@@ -91,7 +91,7 @@ VERBOSE=
 # ... then code in directories named COMPONENT_foo and COMPONENT_bar will be
 # added to the build
 #
-COMPONENTS=FREERTOS LWIP MBEDTLS SECURE_SOCKETS
+COMPONENTS=FREERTOS WICED_BLE LWIP MBEDTLS SECURE_SOCKETS
 
 # Like COMPONENTS, but disable optional code that was enabled by default.
 DISABLE_COMPONENTS=
@@ -104,7 +104,7 @@ SOURCES=
 
 # Like SOURCES, but for include directories. Value should be paths to
 # directories (without a leading -I).
-INCLUDES=./configs ./configs/COMPONENT_$(CORE)
+INCLUDES=./configs
 
 # Custom configuration of mbedtls library.
 MBEDTLSFLAGS = MBEDTLS_USER_CONFIG_FILE='"mbedtls_user_config.h"'
@@ -128,6 +128,9 @@ DEFINES+=CY_WIFI_HOST_WAKE_SW_FORCE=0
 
 #Disabled D-cache for XMC7000 based BSPs
 DEFINES+=CY_DISABLE_XMC7000_DATA_CACHE
+
+# Add additional defines to the build process (without a leading -D).
+DEFINES+=CY_RETARGET_IO_CONVERT_LF_TO_CRLF CY_RTOS_AWARE
 
 # Select softfp or hardfp floating point. Default is softfp.
 VFP_SELECT=
