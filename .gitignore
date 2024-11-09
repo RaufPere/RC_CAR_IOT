@@ -11,7 +11,7 @@
 libs/
 
 # Uncomment below line if you want to lock the library versions for your application
-# !locking_commit.log
+ !locking_commit.log
 
 # ModusToolbox Configurator generated code and lock file
 GeneratedSource/
@@ -29,6 +29,7 @@ Release/
 
 # Eclipse IDE for ModusToolbox files. Comment those files if you want to track them
 .metadata/
+.mtb_shared/
 .settings/
 .cproject
 .project
@@ -42,7 +43,7 @@ openocd.tcl
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-# *.code-workspace
+ *.code-workspace
 
 # IAR Embedded Workbench files
 
