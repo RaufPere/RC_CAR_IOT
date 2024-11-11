@@ -51,8 +51,8 @@
 * Macros
 ********************************************************************************/
 /* Task parameters for MQTT Client Task. */
-#define MQTT_CLIENT_TASK_PRIORITY       (2)
-#define MQTT_CLIENT_TASK_STACK_SIZE     (2048 * 2)
+#define MQTT_CLIENT_TASK_PRIORITY       (3)
+#define MQTT_CLIENT_TASK_STACK_SIZE     (1024 * 2)
 
 /*******************************************************************************
 * Global Variables
@@ -70,7 +70,7 @@ typedef enum
  ******************************************************************************/
 extern cy_mqtt_t mqtt_connection;
 extern QueueHandle_t mqtt_task_q;
-
+extern TaskHandle_t mqtt_task_handle;
 /*******************************************************************************
 * Function Prototypes
 ********************************************************************************/

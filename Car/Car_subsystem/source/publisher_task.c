@@ -77,7 +77,7 @@
  * publisher task.
  */
 #define PUBLISHER_TASK_QUEUE_LENGTH     (3u)
-#define TIMER_INT_PRIORITY       (3u)
+#define TIMER_INT_PRIORITY       (6u)
 #define TIMER_TARGET_FREQUENCY   (10000u)
 #define TIMER_COUNT_PERIOD       (9999u)
 #define MQTT_PAYLOAD_SIZE (145u)
@@ -217,6 +217,7 @@ void publisher_task(void *pvParameters)
                         mqtt_task_cmd = HANDLE_MQTT_PUBLISH_FAILURE;
                         xQueueSend(mqtt_task_q, &mqtt_task_cmd, portMAX_DELAY);
                     }
+                    else printf("MQTT msg published with succes\n");
                     cyhal_timer_start(&timer_obj);
                     print_heap_usage("publisher_task: After publishing an MQTT message");
                     break;
@@ -275,8 +276,11 @@ static void publisher_init(void)
 
 	        /* Start the timer with the configured settings */
 	        result = cyhal_timer_start(&timer_obj);
-	    printf("\nTimer (1s) to periodically publish on the topic '%s'...\n",
-           publish_info.topic);
+
+	    }
+	    else{
+	    	printf("\nTimer couldn't be set up to publish on the topic '%s'...\n",
+	    	           publish_info.topic);
 	    }
 }
 
@@ -286,7 +290,6 @@ static void publisher_deinit(void)
     /* Deregister the Callback and disable the interrupt on the Timer. */
 	// Stop the timer
 	cyhal_timer_stop(&timer_obj);
-
 
 	// Deinit the I2CBUS
 	I2C_PDL_Deinit();

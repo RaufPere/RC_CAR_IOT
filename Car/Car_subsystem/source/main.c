@@ -17,12 +17,13 @@
 
 
 volatile int uxTopUsedPriority;
-TaskHandle_t  button_task_handle;
+TaskHandle_t  bluetooth_task_handle;
+TaskHandle_t  mqtt_task_handle;
 
 int main()
 {
 
-    wiced_result_t wiced_result;
+    //wiced_result_t wiced_result;
     BaseType_t rtos_result;
 
     /* This enables RTOS aware debugging in OpenOCD. */
@@ -42,59 +43,30 @@ int main()
     /* Enable global interrupts. */
     __enable_irq();
 	
-
-    
-
     /* Initialize retarget-io to use the debug UART port. */
     cy_retarget_io_init(CYBSP_DEBUG_UART_TX, CYBSP_DEBUG_UART_RX,
                         CY_RETARGET_IO_BAUDRATE);
 	
-	
     cyhal_gpio_init(LED_PIN, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 1);
 
-    /* Configure platform specific settings for the BT device */
-    cybt_platform_config_init(&cybsp_bt_platform_cfg);
-
-    /* Register call back and configuration with stack */
-    wiced_result = wiced_bt_stack_init(app_bt_management_callback, &wiced_bt_cfg_settings);
-
-    /* Check if stack initialization was successful */
-    if( WICED_BT_SUCCESS == wiced_result)
-    {
-        printf("Bluetooth Stack Initialization Successful \n");
-    }
-    else
-    {
-        printf("Bluetooth Stack Initialization failed!! \n");
-        CY_ASSERT(0);
-    }
-
-    /* Create Button Task for processing button presses */
-    rtos_result = xTaskCreate(button_task,"button_task", BUTTON_TASK_STACK_SIZE,
-                               NULL, BUTTON_TASK_PRIORITY, &button_task_handle);
-    if( pdPASS != rtos_result)
-    {
-        printf("Failed to create Button task! \n");
-        CY_ASSERT(0);
-    }
-
     /* Create the MQTT Client task. */
-    rtos_result = xTaskCreate(mqtt_client_task, "MQTT Client task", MQTT_CLIENT_TASK_STACK_SIZE,
-                NULL, MQTT_CLIENT_TASK_PRIORITY, NULL);
+       rtos_result = xTaskCreate(mqtt_client_task, "MQTT Client task", MQTT_CLIENT_TASK_STACK_SIZE,
+                   NULL, MQTT_CLIENT_TASK_PRIORITY, NULL);
+       if( pdPASS != rtos_result)
+       {
+           printf("Failed to create MQTT task! \n");
+           CY_ASSERT(0);
+       }
+
+    // Create BLE button Task for processing button presses
+    rtos_result = xTaskCreate(bluetooth_task,"bluetooth_task", BLE_TASK_STACK_SIZE,
+                               NULL, BLE_CLIENT_TASK_PRIORITY, &bluetooth_task_handle);
     if( pdPASS != rtos_result)
     {
-        printf("Failed to create Button task! \n");
+        printf("Failed to create bluetooth task! \n");
         CY_ASSERT(0);
     }
 
-    /* Create the BLE Client task. */
-        rtos_result = xTaskCreate(BLE_client_task, "MQTT Client task", MQTT_CLIENT_TASK_STACK_SIZE,
-                    NULL, MQTT_CLIENT_TASK_PRIORITY, NULL);
-        if( pdPASS != rtos_result)
-        {
-            printf("Failed to create Button task! \n");
-            CY_ASSERT(0);
-        }
     /* Start the FreeRTOS scheduler. */
     vTaskStartScheduler();
 
