@@ -5,28 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MQTT Message Display</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.min.js"></script>
+    <style>
+        /* Cube styles */
+        .cube-container {
+            perspective: 600px;
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .cube {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s;
+        }
+
+        .face {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: rgba(0, 128, 255, 0.7);
+            border: 1px solid #000;
+            opacity: 0.7;
+        }
+
+        /* Position each face of the cube */
+        .front  { transform: translateZ(50px); }
+        .back   { transform: rotateY(180deg) translateZ(50px); }
+        .left   { transform: rotateY(-90deg) translateZ(50px); }
+        .right  { transform: rotateY(90deg) translateZ(50px); }
+        .top    { transform: rotateX(90deg) translateZ(50px); }
+        .bottom { transform: rotateX(-90deg) translateZ(50px); }
+    </style>
     <script>
-        // Connect to the WebSocket
         var socket = io.connect('http://' + document.domain + ':' + location.port);
 
-        // Listen for 'mqtt_message' event and update the message on the page
         socket.on('mqtt_message', function(data) {
-            // Display raw JSON string
-            document.getElementById('mqttMessage').innerText = data.message;
+            // Parse the JSON data received from the server
+            let messageData = JSON.parse(data.message);
 
-            // Parse the JSON string
-            var parsedData = JSON.parse(data.message);
+            // Extract gyroscope data
+            const gyroX = messageData.gyro_x;
+            const gyroY = messageData.gyro_y;
+            const gyroZ = messageData.gyro_z;
+
+            // Rotate the cube based on gyroscope data
+            document.querySelector('.cube').style.transform = `rotateX(${gyroX}deg) rotateY(${gyroY}deg) rotateZ(${gyroZ}deg)`;
+
+            // Display raw JSON string
+            document.getElementById('mqttMessage').innerText = JSON.stringify(messageData, null, 2);
 
             // Display JSON data in a table
             var table = document.getElementById('mqttTable');
             table.innerHTML = ''; // Clear previous table content
-            for (var key in parsedData) {
-                if (parsedData.hasOwnProperty(key)) {
+            for (var key in messageData) {
+                if (messageData.hasOwnProperty(key)) {
                     var row = table.insertRow();
                     var cell1 = row.insertCell(0);
                     var cell2 = row.insertCell(1);
                     cell1.innerHTML = key;
-                    cell2.innerHTML = parsedData[key];
+                    cell2.innerHTML = messageData[key];
                 }
             }
         });
@@ -43,5 +83,17 @@
             <th>Value</th>
         </tr>
     </table>
+
+    <!-- 3D Cube to Display Gyroscope Data -->
+    <div class="cube-container">
+        <div class="cube">
+            <div class="face front">Front</div>
+            <div class="face back">Back</div>
+            <div class="face left">Left</div>
+            <div class="face right">Right</div>
+            <div class="face top">Top</div>
+            <div class="face bottom">Bottom</div>
+        </div>
+    </div>
 </body>
 </html>

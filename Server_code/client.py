@@ -1,5 +1,7 @@
 import paho.mqtt.client as mqtt
 import json
+import time
+import random
 
 # MQTT configuration
 MQTT_BROKER = 'api.allthingstalk.io'
@@ -12,28 +14,44 @@ MQTT_PASSWORD = 'Darren'  # Replace with your actual password
 # Callback function when the client connects
 def on_connect(client, userdata, flags, rc):
     print(f"Connected with result code {rc}")
-    # Once connected, publish a simple message
-    message = json.dumps(json_string)
-    client.publish(MQTT_TOPIC, message, qos=MQTT_QOS)
 
-json_string = {
-    "accel_x": 1.2,
-    "accel_y": 1.8,
-    "accel_z": 1.3,
-    "magnitude": 2.0,
-    "gyro_x": 120.0,
-    "gyro_y": 65.0,
-    "gyro_z": 47.0,
-    "temperature": 23.5
-}
+# Function to generate random data for each sensor value
+def generate_random_data():
+    return {
+        "accel_x": round(random.uniform(-3.0, 3.0), 2),
+        "accel_y": round(random.uniform(-3.0, 3.0), 2),
+        "accel_z": round(random.uniform(-3.0, 3.0), 2),
+        "magnitude": round(random.uniform(0.0, 4.0), 2),
+        "gyro_x": round(random.uniform(-180.0, 180.0), 2),
+        "gyro_y": round(random.uniform(-180.0, 180.0), 2),
+        "gyro_z": round(random.uniform(-180.0, 180.0), 2),
+        "temperature": round(random.uniform(20.0, 30.0), 2)
+    }
 
 # Setup MQTT client
 client = mqtt.Client()
-client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)  # Set the credentials
+client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
 client.on_connect = on_connect
 
 # Connect to the broker
 client.connect(MQTT_BROKER, MQTT_PORT)
 
-# Start the loop to process messages
-client.loop_forever()
+# Publish data in a loop every 1 second
+client.loop_start()  # Start a separate thread to handle network events
+
+try:
+    while True:
+        # Generate random sensor data
+        message_data = generate_random_data()
+        # Convert to JSON string
+        message = json.dumps(message_data)
+        # Publish the message
+        client.publish(MQTT_TOPIC, message, qos=MQTT_QOS)
+        print(f"Published message: {message}")
+        # Wait 1 second before sending the next message
+        time.sleep(1)
+except KeyboardInterrupt:
+    print("Stopped publishing data.")
+finally:
+    client.loop_stop()
+    client.disconnect()
