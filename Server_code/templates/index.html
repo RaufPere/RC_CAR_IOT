@@ -11,12 +11,37 @@
 
         // Listen for 'mqtt_message' event and update the message on the page
         socket.on('mqtt_message', function(data) {
+            // Display raw JSON string
             document.getElementById('mqttMessage').innerText = data.message;
+
+            // Parse the JSON string
+            var parsedData = JSON.parse(data.message);
+
+            // Display JSON data in a table
+            var table = document.getElementById('mqttTable');
+            table.innerHTML = ''; // Clear previous table content
+            for (var key in parsedData) {
+                if (parsedData.hasOwnProperty(key)) {
+                    var row = table.insertRow();
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    cell1.innerHTML = key;
+                    cell2.innerHTML = parsedData[key];
+                }
+            }
         });
     </script>
 </head>
 <body>
     <h1>Latest MQTT Message</h1>
-    <p id="mqttMessage">Waiting for message...</p>
+    <h2>Raw JSON String</h2>
+    <pre id="mqttMessage">Waiting for message...</pre>
+    <h2>JSON Data in Table</h2>
+    <table id="mqttTable" border="1">
+        <tr>
+            <th>Key</th>
+            <th>Value</th>
+        </tr>
+    </table>
 </body>
 </html>

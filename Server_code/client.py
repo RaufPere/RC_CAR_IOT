@@ -1,4 +1,5 @@
 import paho.mqtt.client as mqtt
+import json
 
 # MQTT configuration
 MQTT_BROKER = 'api.allthingstalk.io'
@@ -12,8 +13,19 @@ MQTT_PASSWORD = 'Darren'  # Replace with your actual password
 def on_connect(client, userdata, flags, rc):
     print(f"Connected with result code {rc}")
     # Once connected, publish a simple message
-    message = "Hello, Darren!"
+    message = json.dumps(json_string)
     client.publish(MQTT_TOPIC, message, qos=MQTT_QOS)
+
+json_string = {
+    "accel_x": 1.2,
+    "accel_y": 1.8,
+    "accel_z": 1.3,
+    "magnitude": 2.0,
+    "gyro_x": 120.0,
+    "gyro_y": 65.0,
+    "gyro_z": 47.0,
+    "temperature": 23.5
+}
 
 # Setup MQTT client
 client = mqtt.Client()
