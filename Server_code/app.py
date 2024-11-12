@@ -1,9 +1,11 @@
 from flask import Flask, render_template
 import paho.mqtt.client as mqtt
 import threading
+from flask_socketio import SocketIO, emit
 
 # Flask app initialization
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 # MQTT configuration
 MQTT_BROKER = 'api.allthingstalk.io'
@@ -20,6 +22,7 @@ mqtt_message = ""
 def on_message(client, userdata, message):
     global mqtt_message
     mqtt_message = message.payload.decode('utf-8')  # Assuming message is in string format
+    socketio.emit('mqtt_message', {'message': mqtt_message})  # Emit message to clients
 
 # Setup MQTT client
 def mqtt_setup():
@@ -39,9 +42,9 @@ def start_mqtt_thread():
 # Route to display the message on HTML page
 @app.route('/')
 def index():
-    return render_template('index.html', message=mqtt_message)
+    return render_template('index.html')
 
 # Start the MQTT listener when the Flask app starts
 if __name__ == '__main__':
     start_mqtt_thread()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)

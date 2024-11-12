@@ -12,7 +12,7 @@ MQTT_PASSWORD = 'Darren'  # Replace with your actual password
 def on_connect(client, userdata, flags, rc):
     print(f"Connected with result code {rc}")
     # Once connected, publish a simple message
-    message = "Hello, MQTT!"
+    message = "Hello, Darren!"
     client.publish(MQTT_TOPIC, message, qos=MQTT_QOS)
 
 # Setup MQTT client
