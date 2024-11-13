@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include "wiced_bt_uuid.h"
 #include "wiced_bt_types.h"
-//#include "mqtt_task.h"
 
 static uint16_t                    bt_connection_id = 0;
 static cts_discovery_data_t        cts_discovery_data;
@@ -102,10 +101,14 @@ wiced_result_t app_bt_management_callback(wiced_bt_management_evt_t event,
 
 static void ble_app_init(void)
 {
+
+
     cy_rslt_t cy_result = CY_RSLT_SUCCESS;
     wiced_bt_gatt_status_t gatt_status = WICED_BT_GATT_SUCCESS;
 
-
+    printf("\n***********************************************\n");
+    printf("**Discover device with \"CTS Client\" name*\n");
+    printf("***********************************************\n\n");
 
     /* Initialize GPIO for button interrupt*/
     cy_result = cyhal_gpio_init(CYBSP_USER_BTN, CYHAL_GPIO_DIR_INPUT,
@@ -137,41 +140,39 @@ static void ble_app_init(void)
             get_bt_gatt_status_name(gatt_status));
     BaseType_t xHigherPriorityTaskWoken;
 	xHigherPriorityTaskWoken = pdFALSE;
-	vTaskNotifyGiveFromISR(bluetooth_task_handle, &xHigherPriorityTaskWoken);
+	vTaskNotifyGiveFromISR(button_task_handle, &xHigherPriorityTaskWoken);
 	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
-
 }
 
 void button_interrupt_handler(void *handler_arg, cyhal_gpio_event_t event)
 {
     BaseType_t xHigherPriorityTaskWoken;
     xHigherPriorityTaskWoken = pdFALSE;
-    vTaskNotifyGiveFromISR(bluetooth_task_handle, &xHigherPriorityTaskWoken);
+    vTaskNotifyGiveFromISR(button_task_handle, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
 }
 
-void bluetooth_task(void *pvParameters)
+void button_task(void *pvParameters)
 {
-	// Take the notification from MQTT task client.
-	ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-		wiced_result_t wiced_result;
-
 	/* Configure platform specific settings for the BT device */
-	    cybt_platform_config_init(&cybsp_bt_platform_cfg);
+	      cybt_platform_config_init(&cybsp_bt_platform_cfg);
 
-	    /* Register call back and configuration with stack */
-	    wiced_result = wiced_bt_stack_init(app_bt_management_callback, &wiced_bt_cfg_settings);
+	      /* Register call back and configuration with stack */
+	      wiced_result_t wiced_result = wiced_bt_stack_init(app_bt_management_callback,
+	                                         &wiced_bt_cfg_settings);
 
-	    /* Check if stack initialization was successful */
-	    if( WICED_BT_SUCCESS != wiced_result)
-	    {
-	        printf("Bluetooth Stack Initialization failed \n");
-	    }
-
+	      /* Check if stack initialization was successful */
+	      if( WICED_BT_SUCCESS == wiced_result)
+	      {
+	          printf("Bluetooth Stack Initialization Successful \n");
+	      }
+	      else
+	      {
+	          printf("Bluetooth Stack Initialization failed!! \n");
+	          CY_ASSERT(0);
+	      }
     wiced_result = WICED_BT_ERROR;
     wiced_bt_gatt_status_t gatt_status;
-    //xTaskNotifyGive(mqtt_task_handle);
-
     for(;;)
     {
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);

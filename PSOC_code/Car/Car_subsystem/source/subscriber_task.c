@@ -46,7 +46,7 @@
 #include "cybsp.h"
 #include "string.h"
 #include "FreeRTOS.h"
-#include "MPU6050.h"
+
 /* Task header files */
 #include "subscriber_task.h"
 #include "mqtt_task.h"
@@ -84,6 +84,10 @@ TaskHandle_t subscriber_task_handle;
 /* Handle of the queue holding the commands for the subscriber task */
 QueueHandle_t subscriber_task_q;
 
+/* Variable to denote the current state of the user LED that is also used by
+ * the publisher task.
+ */
+uint32_t current_device_state = DEVICE_OFF_STATE;
 
 /* Configure the subscription information structure. */
 static cy_mqtt_subscribe_info_t subscribe_info =
@@ -123,6 +127,10 @@ void subscriber_task(void *pvParameters)
     /* To avoid compiler warnings */
     (void) pvParameters;
 
+    /* Initialize the User LED. */
+    cyhal_gpio_init(CYBSP_USER_LED, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_PULLUP,
+                    CYBSP_LED_STATE_OFF);
+
     /* Subscribe to the specified MQTT topic. */
     subscribe_to_topic();
 
@@ -148,10 +156,15 @@ void subscriber_task(void *pvParameters)
                     break;
                 }
 
-                case READ_PUBLISHED_DATA_FROM_TOPIC:
+                case UPDATE_DEVICE_STATE:
                 {
-                	printf("\nSubscriber: subscribed data %.*s\r\n", subscriber_q_data.strLength, subscriber_q_data.received_msg);
-                    print_heap_usage("subscriber_task: MPU6050");
+                    /* Update the LED state as per received notification. */
+                	subscriber_q_data.data = !subscriber_q_data.data;
+                    cyhal_gpio_write(CYBSP_USER_LED, subscriber_q_data.data);
+
+                    /* Update the current device state extern variable. */
+                    current_device_state = subscriber_q_data.data;
+                    print_heap_usage("subscriber_task: After updating LED state");
                     break;
                 }
             }
@@ -227,29 +240,42 @@ static void subscribe_to_topic(void)
  ******************************************************************************/
 void mqtt_subscription_callback(cy_mqtt_publish_info_t *received_msg_info)
 {
-	subscriber_data_t subscriber_q_data;
     /* Received MQTT message */
-	/*
     const char *received_msg = received_msg_info->payload;
     int received_msg_len = received_msg_info->payload_len;
-	*/
-    /*
-                    	printf("  \nSubsciber: Incoming MQTT message received:\n"
-                    	           "    Publish topic name: %.*s\n"
-                    	           "    Publish QoS: %d\n"
-                    	           "    Publish payload: %.*s\n",
-                    	           received_msg_info->topic_len, received_msg_info->topic,
-                    	           (int) received_msg_info->qos,
-                    	           (int) received_msg_info->payload_len, (const char *)received_msg_info->payload);
-    */
 
     /* Data to be sent to the subscriber task queue. */
-    strcpy(subscriber_q_data.received_msg, received_msg_info->payload);
-    subscriber_q_data.strLength = received_msg_info->payload_len;
-    /* Assign the command to be sent to the subscriber task. */
-    subscriber_q_data.cmd = READ_PUBLISHED_DATA_FROM_TOPIC;
+    subscriber_data_t subscriber_q_data;
 
-    //print_heap_usage("MQTT subscription callback");
+    printf("  \nSubsciber: Incoming MQTT message received:\n"
+           "    Publish topic name: %.*s\n"
+           "    Publish QoS: %d\n"
+           "    Publish payload: %.*s\n",
+           received_msg_info->topic_len, received_msg_info->topic,
+           (int) received_msg_info->qos,
+           (int) received_msg_info->payload_len, (const char *)received_msg_info->payload);
+
+    /* Assign the command to be sent to the subscriber task. */
+    subscriber_q_data.cmd = UPDATE_DEVICE_STATE;
+
+    /* Assign the device state depending on the received MQTT message. */
+    if ((strlen(MQTT_DEVICE_ON_MESSAGE) == received_msg_len) &&
+        (strncmp(MQTT_DEVICE_ON_MESSAGE, received_msg, received_msg_len) == 0))
+    {
+        subscriber_q_data.data = DEVICE_ON_STATE;
+    }
+    else if ((strlen(MQTT_DEVICE_OFF_MESSAGE) == received_msg_len) &&
+             (strncmp(MQTT_DEVICE_OFF_MESSAGE, received_msg, received_msg_len) == 0))
+    {
+        subscriber_q_data.data = DEVICE_OFF_STATE;
+    }
+    else
+    {
+        printf("  Subscriber: Received MQTT message not in valid format!\n");
+        return;
+    }
+
+    print_heap_usage("MQTT subscription callback");
 
     /* Send the command and data to subscriber task queue */
     xQueueSend(subscriber_task_q, &subscriber_q_data, portMAX_DELAY);

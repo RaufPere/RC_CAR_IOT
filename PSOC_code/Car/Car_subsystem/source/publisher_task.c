@@ -46,7 +46,7 @@
 #include "cyhal.h"
 #include "cybsp.h"
 #include "FreeRTOS.h"
-#include "MPU6050.h"
+
 /* Task header files */
 #include "publisher_task.h"
 #include "mqtt_task.h"
@@ -59,11 +59,18 @@
 #include "cy_mqtt_api.h"
 #include "cy_retarget_io.h"
 
+#include "MPU6050.h"
 /******************************************************************************
 * Macros
 ******************************************************************************/
 /* Interrupt priority for User Button Input. */
 #define USER_TIMER_INTR_PRIORITY          (3)
+#define TIMER_INT_PRIORITY       (3u)
+#define TIMER_TARGET_FREQUENCY   (10000u)
+#define TIMER_COUNT_PERIOD       (9999u)
+#define MQTT_PAYLOAD_SIZE (145u)
+/* Interrupt priority for User Button Input. */
+#define USER_BTN_INTR_PRIORITY          (3)
 
 /* The maximum number of times each PUBLISH in this example will be retried. */
 #define PUBLISH_RETRY_LIMIT             (10)
@@ -77,15 +84,13 @@
  * publisher task.
  */
 #define PUBLISHER_TASK_QUEUE_LENGTH     (3u)
-#define TIMER_INT_PRIORITY       (6u)
-#define TIMER_TARGET_FREQUENCY   (10000u)
-#define TIMER_COUNT_PERIOD       (9999u)
-#define MQTT_PAYLOAD_SIZE (145u)
+
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
 static void publisher_init(void);
 static void publisher_deinit(void);
+
 void print_heap_usage(char *msg);
 
 /******************************************************************************
@@ -96,6 +101,17 @@ TaskHandle_t publisher_task_handle;
 
 /* Handle of the queue holding the commands for the publisher task */
 QueueHandle_t publisher_task_q;
+
+/* Structure to store publish message information. */
+cy_mqtt_publish_info_t publish_info =
+{
+    .qos = (cy_mqtt_qos_t) MQTT_MESSAGES_QOS,
+    .topic = MQTT_PUB_TOPIC,
+    .topic_len = (sizeof(MQTT_PUB_TOPIC) - 1),
+    .retain = false,
+    .dup = false
+};
+
 /*timer object used*/
 cyhal_timer_t timer_obj;
 /*timer configuration*/
@@ -108,15 +124,9 @@ const cyhal_timer_cfg_t timer_cfg =
     .is_continuous = true,               // Run the timer indefinitely
     .value         = 0                   // Initial value of counter
 };
-/* Structure to store publish message information. */
-cy_mqtt_publish_info_t publish_info =
-{
-    .qos = (cy_mqtt_qos_t) MQTT_MESSAGES_QOS,
-    .topic = MQTT_PUB_TOPIC,
-    .topic_len = (sizeof(MQTT_PUB_TOPIC) - 1),
-    .retain = false,
-    .dup = false
-};
+
+/* Structure that stores the callback data for the GPIO interrupt event. */
+
 static void isr_timer(void* callback_arg, cyhal_timer_event_t event);
 /******************************************************************************
  * Function Name: publisher_task
@@ -162,7 +172,7 @@ void publisher_task(void *pvParameters)
             {
                 case PUBLISHER_INIT:
                 {
-                    /* Initialize and set-up timed MP6050 messages. */
+                    /* Initialize and set-up the user button GPIO. */
                     publisher_init();
                     break;
                 }
@@ -177,30 +187,30 @@ void publisher_task(void *pvParameters)
                 case PUBLISH_MQTT_MSG:
                 {
                 	// Wake the MPU6050 up from sleep mode
-                	MPU6050_i2c_config();
-                	// Read accelerometer registers
-                	MPU6050_i2c_accelerometer(&publisher_q_data.accel_x, &publisher_q_data.accel_y,
-                							&publisher_q_data.accel_z, &publisher_q_data.magnitude);
-                	// Read temperature registers
-                	MPU6050_i2c_tempRead(&publisher_q_data.temperature);
-                	// Read gyroscope registers
-                	MPU6050_i2c_gyroscoop(&publisher_q_data.gyro_x, &publisher_q_data.gyro_y, &publisher_q_data.gyro_z);
-                    /* Publish the data received over the message queue. */
-                	char payload_buffer[MQTT_PAYLOAD_SIZE];  // Allocate enough space for the formatted string
+                	                	MPU6050_i2c_config();
+                	                	// Read accelerometer registers
+                	                	MPU6050_i2c_accelerometer(&publisher_q_data.accel_x, &publisher_q_data.accel_y,
+                	                							&publisher_q_data.accel_z, &publisher_q_data.magnitude);
+                	                	// Read temperature registers
+                	                	MPU6050_i2c_tempRead(&publisher_q_data.temperature);
+                	                	// Read gyroscope registers
+                	                	MPU6050_i2c_gyroscoop(&publisher_q_data.gyro_x, &publisher_q_data.gyro_y, &publisher_q_data.gyro_z);
+                	                    /* Publish the data received over the message queue. */
+                	                	char payload_buffer[MQTT_PAYLOAD_SIZE];  // Allocate enough space for the formatted string
 
-                	// Format the data into the buffer as JSON or similar format
-                	snprintf(payload_buffer, sizeof(payload_buffer),
-                	         "{"
-                	         "\"accel_x\": %.2f, \"accel_y\": %.2f, \"accel_z\": %.2f, \"magnitude\": %.2f, "
-                	         "\"gyro_x\": %.2f, \"gyro_y\": %.2f, \"gyro_z\": %.2f, "
-                	         "\"temperature\": %.2f"
-                	         "}",
-                	         publisher_q_data.accel_x, publisher_q_data.accel_y, publisher_q_data.accel_z,
-                	         publisher_q_data.magnitude,
-                	         publisher_q_data.gyro_x, publisher_q_data.gyro_y, publisher_q_data.gyro_z,
-                	         publisher_q_data.temperature);
-                	publish_info.payload = payload_buffer;
-                    publish_info.payload_len = strlen(publish_info.payload);
+                	                	// Format the data into the buffer as JSON or similar format
+                	                	snprintf(payload_buffer, sizeof(payload_buffer),
+                	                	         "{"
+                	                	         "\"accel_x\": %.2f, \"accel_y\": %.2f, \"accel_z\": %.2f, \"magnitude\": %.2f, "
+                	                	         "\"gyro_x\": %.2f, \"gyro_y\": %.2f, \"gyro_z\": %.2f, "
+                	                	         "\"temperature\": %.2f"
+                	                	         "}",
+                	                	         publisher_q_data.accel_x, publisher_q_data.accel_y, publisher_q_data.accel_z,
+                	                	         publisher_q_data.magnitude,
+                	                	         publisher_q_data.gyro_x, publisher_q_data.gyro_y, publisher_q_data.gyro_z,
+                	                	         publisher_q_data.temperature);
+                	                	publish_info.payload = payload_buffer;
+                	                    publish_info.payload_len = strlen(publish_info.payload);
 
                     printf("\nPublisher: Publishing '%s' on the topic '%s'\n",
                            (char *) publish_info.payload, publish_info.topic);
@@ -217,8 +227,7 @@ void publisher_task(void *pvParameters)
                         mqtt_task_cmd = HANDLE_MQTT_PUBLISH_FAILURE;
                         xQueueSend(mqtt_task_q, &mqtt_task_cmd, portMAX_DELAY);
                     }
-                    else printf("MQTT msg published with succes\n");
-                    cyhal_timer_start(&timer_obj);
+
                     print_heap_usage("publisher_task: After publishing an MQTT message");
                     break;
                 }
@@ -243,75 +252,83 @@ void publisher_task(void *pvParameters)
  ******************************************************************************/
 static void publisher_init(void)
 {
-    /* Initialize I2C and timer to publish a message each second. */
 
-	I2C_PDL_Setup();
-	cy_rslt_t result;
+    cy_rslt_t result;
+    I2C_PDL_Setup();
+    	/* Initialize the timer object. Does not use pin output ('pin' is NC) and
+    	     * does not use a pre-configured clock source ('clk' is NULL) */
+    	    result = cyhal_timer_init(&timer_obj, NC, NULL);
 
-	/* Initialize the timer object. Does not use pin output ('pin' is NC) and
-	     * does not use a pre-configured clock source ('clk' is NULL) */
-	    result = cyhal_timer_init(&timer_obj, NC, NULL);
+    	    /*Apply timer configuration such as period, count direction, run mode, etc*/
+    	    if (CY_RSLT_SUCCESS == result)
+    	    {
+    	        result = cyhal_timer_configure(&timer_obj, &timer_cfg);
+    	    }
 
-	    /*Apply timer configuration such as period, count direction, run mode, etc*/
-	    if (CY_RSLT_SUCCESS == result)
-	    {
-	        result = cyhal_timer_configure(&timer_obj, &timer_cfg);
-	    }
+    	    /* Set the frequency of timer to 10000 Hz */
+    	    if (CY_RSLT_SUCCESS == result)
+    	    {
+    	        result = cyhal_timer_set_frequency(&timer_obj, TIMER_TARGET_FREQUENCY);
+    	    }
 
-	    /* Set the frequency of timer to 10000 Hz */
-	    if (CY_RSLT_SUCCESS == result)
-	    {
-	        result = cyhal_timer_set_frequency(&timer_obj, TIMER_TARGET_FREQUENCY);
-	    }
+    	    /* register timer interrupt and enable */
+    	    if (CY_RSLT_SUCCESS == result)
+    	    {
+    	        /* Assign the ISR to execute on timer interrupt */
+    	        cyhal_timer_register_callback(&timer_obj, isr_timer, NULL);
 
-	    /* register timer interrupt and enable */
-	    if (CY_RSLT_SUCCESS == result)
-	    {
-	        /* Assign the ISR to execute on timer interrupt */
-	        cyhal_timer_register_callback(&timer_obj, isr_timer, NULL);
+    	        /* Set the event on which timer interrupt occurs and enable it */
+    	        cyhal_timer_enable_event(&timer_obj, CYHAL_TIMER_IRQ_TERMINAL_COUNT,
+    	                TIMER_INT_PRIORITY, true);
 
-	        /* Set the event on which timer interrupt occurs and enable it */
-	        cyhal_timer_enable_event(&timer_obj, CYHAL_TIMER_IRQ_TERMINAL_COUNT,
-	                TIMER_INT_PRIORITY, true);
-
-	        /* Start the timer with the configured settings */
-	        result = cyhal_timer_start(&timer_obj);
-
-	    }
-	    else{
-	    	printf("\nTimer couldn't be set up to publish on the topic '%s'...\n",
-	    	           publish_info.topic);
-	    }
+    	        /* Start the timer with the configured settings */
+    	        result = cyhal_timer_start(&timer_obj);
+    	    printf("\nTimer (1s) to periodically publish on the topic '%s'...\n",
+               publish_info.topic);
+    	    }
+    	    else printf("Timer setup failed... publisher_task.c\n");
 }
 
-
+/******************************************************************************
+ * Function Name: publisher_deinit
+ ******************************************************************************
+ * Summary:
+ *  Cleanup function for the publisher task that disables the user button
+ *  interrupt and deinits the user button GPIO pin.
+ *
+ * Parameters:
+ *  void
+ *
+ * Return:
+ *  void
+ *
+ ******************************************************************************/
 static void publisher_deinit(void)
 {
-    /* Deregister the Callback and disable the interrupt on the Timer. */
-	// Stop the timer
-	cyhal_timer_stop(&timer_obj);
-
-	// Deinit the I2CBUS
-	I2C_PDL_Deinit();
+cyhal_timer_stop(&timer_obj);
 }
 
-/*******************************************************************************
-* Function Name: isr_timer
-********************************************************************************
-* Summary:
-* This is the timer interrupt callback function.
-*
-* Parameters:
-*  void* callback_arg
-*  cyhal_timer_event_t event
-*
-* Return:
-* NC
-*
-*******************************************************************************/
+/******************************************************************************
+ * Function Name: isr_button_press
+ ******************************************************************************
+ * Summary:
+ *  GPIO interrupt service routine. This function detects button
+ *  presses and sends the publish command along with the data to be published
+ *  to the publisher task over a message queue. Based on the current device
+ *  state, the publish data is set so that the device state gets toggled.
+ *
+ * Parameters:
+ *  void *callback_arg : pointer to variable passed to the ISR (unused)
+ *  cyhal_gpio_event_t event : GPIO event type (unused)
+ *
+ * Return:
+ *  void
+ *
+ ******************************************************************************/
+
 static void isr_timer(void* callback_arg, cyhal_timer_event_t event)
 {
-	cyhal_timer_stop(&timer_obj);
+	//cyhal_timer_stop(&timer_obj);
 
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	// This function will be called every time the timer overflows (1000 ms in this case)
@@ -320,9 +337,10 @@ static void isr_timer(void* callback_arg, cyhal_timer_event_t event)
     (void)event;
     /* Assign the publish command to be sent to the publisher task. */
     publisher_q_data.cmd = PUBLISH_MQTT_MSG;
+    /* Assign the publish message payload so that the device state toggles. */
     /* Send the command and data to publisher task over the queue */
     xQueueSendFromISR(publisher_task_q, &publisher_q_data, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-
 }
+
 /* [] END OF FILE */

@@ -92,7 +92,8 @@
  * device (user LED in this example) state in this code example.
  */
 
-
+#define MQTT_DEVICE_ON_MESSAGE            "TURN ON"
+#define MQTT_DEVICE_OFF_MESSAGE           "TURN OFF"
 
 /******************* OTHER MQTT CLIENT CONFIGURATION MACROS *******************/
 /* A unique client identifier to be used for every MQTT connection. */
@@ -102,7 +103,7 @@
 #define MQTT_TIMEOUT_MS                   ( 5000 )
 
 /* The keep-alive interval in seconds used for MQTT ping request. */
-#define MQTT_KEEP_ALIVE_SECONDS           ( 15 )
+#define MQTT_KEEP_ALIVE_SECONDS           ( 30 )
 
 /* Every active MQTT connection must have a unique client identifier. If you
  * are using the above 'MQTT_CLIENT_IDENTIFIER' as client ID for multiple MQTT

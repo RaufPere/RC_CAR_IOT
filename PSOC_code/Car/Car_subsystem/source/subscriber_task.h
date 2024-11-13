@@ -53,7 +53,11 @@
 /* Task parameters for Subscriber Task. */
 #define SUBSCRIBER_TASK_PRIORITY           (2)
 #define SUBSCRIBER_TASK_STACK_SIZE         (1024 * 1)
-#define MQTT_PAYLOAD_SIZE (145u)
+
+/* 8-bit value denoting the device (LED) state. */
+#define DEVICE_ON_STATE                    (0x00u)
+#define DEVICE_OFF_STATE                   (0x01u)
+
 /*******************************************************************************
 * Global Variables
 ********************************************************************************/
@@ -62,14 +66,13 @@ typedef enum
 {
     SUBSCRIBE_TO_TOPIC,
     UNSUBSCRIBE_FROM_TOPIC,
-    READ_PUBLISHED_DATA_FROM_TOPIC
+    UPDATE_DEVICE_STATE
 } subscriber_cmd_t;
 
 /* Struct to be passed via the subscriber task queue */
 typedef struct{
     subscriber_cmd_t cmd;
-    char received_msg[MQTT_PAYLOAD_SIZE];
-    int strLength;
+    uint8_t data;
 } subscriber_data_t;
 
 /*******************************************************************************

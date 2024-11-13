@@ -60,8 +60,6 @@
 #include "wifi_config.h"
 #include "mqtt_client_config.h"
 
-/* Bleutooth handle header file */
-#include "cts_client.h"
 /* Middleware libraries */
 #include "cy_retarget_io.h"
 #include "cy_wcm.h"
@@ -196,7 +194,7 @@ void mqtt_client_task(void *pvParameters)
      * WCM initialization.
      */
     status_flag |= WCM_INITIALIZED;
-    //printf("\nWi-Fi Connection Manager initialized.\n");
+    printf("\nWi-Fi Connection Manager initialized.\n");
 
     /* Initiate connection to the Wi-Fi AP and cleanup if the operation fails. */
     if (CY_RSLT_SUCCESS != wifi_connect())
@@ -232,7 +230,6 @@ void mqtt_client_task(void *pvParameters)
     }
 
     print_heap_usage("mqtt_client_task: subscriber & publisher tasks created\n");
-    xTaskNotifyGive(bluetooth_task_handle);
 
     while (true)
     {
