@@ -51,7 +51,7 @@
 *******************************************************************************/
 /* Macros for button interrupt and button task */
 /* Interrupt priority for the GPIO connected to the user button */
-#define BUTTON_INTERRUPT_PRIORITY       (7u)
+#define BUTTON_INTERRUPT_PRIORITY          (7u)
 #define BLUETOOTH_TASK_PRIORITY            (configMAX_PRIORITIES - 1)
 #define BLUETOOTH_TASK_STACK_SIZE          (configMINIMAL_STACK_SIZE * 8)
 

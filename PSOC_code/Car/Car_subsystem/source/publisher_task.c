@@ -58,19 +58,18 @@
 /* Middleware libraries */
 #include "cy_mqtt_api.h"
 #include "cy_retarget_io.h"
-
+#include "cts_client.h"
 #include "MPU6050.h"
 /******************************************************************************
 * Macros
 ******************************************************************************/
 /* Interrupt priority for User Button Input. */
-#define USER_TIMER_INTR_PRIORITY          (3)
 #define TIMER_INT_PRIORITY       (3u)
 #define TIMER_TARGET_FREQUENCY   (10000u)
-#define TIMER_COUNT_PERIOD       (9999u)
+#define TIMER_COUNT_PERIOD       (999u)
 #define MQTT_PAYLOAD_SIZE (145u)
 /* Interrupt priority for User Button Input. */
-#define USER_BTN_INTR_PRIORITY          (3)
+
 
 /* The maximum number of times each PUBLISH in this example will be retried. */
 #define PUBLISH_RETRY_LIMIT             (10)
@@ -285,6 +284,7 @@ static void publisher_init(void)
     	        result = cyhal_timer_start(&timer_obj);
     	    printf("\nTimer (1s) to periodically publish on the topic '%s'...\n",
                publish_info.topic);
+    	    xTaskNotifyGive(bluetooth_task_handle);
     	    }
     	    else printf("Timer setup failed... publisher_task.c\n");
 }

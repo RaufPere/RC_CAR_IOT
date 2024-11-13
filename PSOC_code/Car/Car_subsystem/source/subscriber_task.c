@@ -87,7 +87,7 @@ QueueHandle_t subscriber_task_q;
 /* Variable to denote the current state of the user LED that is also used by
  * the publisher task.
  */
-uint32_t current_device_state = DEVICE_OFF_STATE;
+
 
 /* Configure the subscription information structure. */
 static cy_mqtt_subscribe_info_t subscribe_info =
@@ -237,10 +237,11 @@ void mqtt_subscription_callback(cy_mqtt_publish_info_t *received_msg_info)
     /* Received MQTT message */
     const char *received_msg = received_msg_info->payload;
     int received_msg_len = received_msg_info->payload_len;
-
+    (void) received_msg_len;
+    (void) received_msg;
     /* Data to be sent to the subscriber task queue. */
     subscriber_data_t subscriber_q_data;
-/*
+
     printf("  \nSubsciber: Incoming MQTT message received:\n"
            "    Publish topic name: %.*s\n"
            "    Publish QoS: %d\n"
@@ -248,7 +249,7 @@ void mqtt_subscription_callback(cy_mqtt_publish_info_t *received_msg_info)
            received_msg_info->topic_len, received_msg_info->topic,
            (int) received_msg_info->qos,
            (int) received_msg_info->payload_len, (const char *)received_msg_info->payload);
-*/
+
     /* Assign the command to be sent to the subscriber task. */
     subscriber_q_data.cmd = UPDATE_DEVICE_STATE;
 

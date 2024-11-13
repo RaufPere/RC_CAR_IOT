@@ -146,6 +146,7 @@ static void ble_app_init(void)
 
 void button_interrupt_handler(void *handler_arg, cyhal_gpio_event_t event)
 {
+
     BaseType_t xHigherPriorityTaskWoken;
     xHigherPriorityTaskWoken = pdFALSE;
     vTaskNotifyGiveFromISR(bluetooth_task_handle, &xHigherPriorityTaskWoken);
@@ -154,6 +155,8 @@ void button_interrupt_handler(void *handler_arg, cyhal_gpio_event_t event)
 
 void bluetooth_task(void *pvParameters)
 {
+	ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+
 	/* Configure platform specific settings for the BT device */
 	      cybt_platform_config_init(&cybsp_bt_platform_cfg);
 
@@ -237,7 +240,7 @@ ble_app_gatt_event_callback(wiced_bt_gatt_evt_t event,
                     {
                         if(notify_val)
                         {
-                            printf("Notifications enabled\n");
+                            //printf("Notifications enabled\n");
                         }
                         else
                         {
