@@ -158,13 +158,7 @@ void subscriber_task(void *pvParameters)
 
                 case UPDATE_DEVICE_STATE:
                 {
-                    /* Update the LED state as per received notification. */
-                	subscriber_q_data.data = !subscriber_q_data.data;
-                    cyhal_gpio_write(CYBSP_USER_LED, subscriber_q_data.data);
 
-                    /* Update the current device state extern variable. */
-                    current_device_state = subscriber_q_data.data;
-                    print_heap_usage("subscriber_task: After updating LED state");
                     break;
                 }
             }
@@ -246,7 +240,7 @@ void mqtt_subscription_callback(cy_mqtt_publish_info_t *received_msg_info)
 
     /* Data to be sent to the subscriber task queue. */
     subscriber_data_t subscriber_q_data;
-
+/*
     printf("  \nSubsciber: Incoming MQTT message received:\n"
            "    Publish topic name: %.*s\n"
            "    Publish QoS: %d\n"
@@ -254,28 +248,13 @@ void mqtt_subscription_callback(cy_mqtt_publish_info_t *received_msg_info)
            received_msg_info->topic_len, received_msg_info->topic,
            (int) received_msg_info->qos,
            (int) received_msg_info->payload_len, (const char *)received_msg_info->payload);
-
+*/
     /* Assign the command to be sent to the subscriber task. */
     subscriber_q_data.cmd = UPDATE_DEVICE_STATE;
 
-    /* Assign the device state depending on the received MQTT message. */
-    if ((strlen(MQTT_DEVICE_ON_MESSAGE) == received_msg_len) &&
-        (strncmp(MQTT_DEVICE_ON_MESSAGE, received_msg, received_msg_len) == 0))
-    {
-        subscriber_q_data.data = DEVICE_ON_STATE;
-    }
-    else if ((strlen(MQTT_DEVICE_OFF_MESSAGE) == received_msg_len) &&
-             (strncmp(MQTT_DEVICE_OFF_MESSAGE, received_msg, received_msg_len) == 0))
-    {
-        subscriber_q_data.data = DEVICE_OFF_STATE;
-    }
-    else
-    {
-        printf("  Subscriber: Received MQTT message not in valid format!\n");
-        return;
-    }
 
-    print_heap_usage("MQTT subscription callback");
+
+
 
     /* Send the command and data to subscriber task queue */
     xQueueSend(subscriber_task_q, &subscriber_q_data, portMAX_DELAY);

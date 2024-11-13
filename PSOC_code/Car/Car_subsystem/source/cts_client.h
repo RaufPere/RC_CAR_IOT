@@ -52,8 +52,8 @@
 /* Macros for button interrupt and button task */
 /* Interrupt priority for the GPIO connected to the user button */
 #define BUTTON_INTERRUPT_PRIORITY       (7u)
-#define BUTTON_TASK_PRIORITY            (configMAX_PRIORITIES - 1)
-#define BUTTON_TASK_STACK_SIZE          (configMINIMAL_STACK_SIZE * 8)
+#define BLUETOOTH_TASK_PRIORITY            (configMAX_PRIORITIES - 1)
+#define BLUETOOTH_TASK_STACK_SIZE          (configMINIMAL_STACK_SIZE * 8)
 
 #define LED_PIN P13_7
 
@@ -98,13 +98,13 @@ typedef struct
 /*******************************************************************************
  * Extern variables
  ******************************************************************************/
-extern TaskHandle_t  button_task_handle;
+extern TaskHandle_t  bluetooth_task_handle;
 
 /*******************************************************************************
 *        Function Prototypes
 *******************************************************************************/
 /* FreeRTOS task functions */
-void button_task (void *pvParameters);
+void bluetooth_task (void *pvParameters);
 
 /* Callback function for Bluetooth stack management events */
 wiced_bt_dev_status_t app_bt_management_callback(wiced_bt_management_evt_t event,

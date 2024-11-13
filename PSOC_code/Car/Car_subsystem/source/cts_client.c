@@ -140,7 +140,7 @@ static void ble_app_init(void)
             get_bt_gatt_status_name(gatt_status));
     BaseType_t xHigherPriorityTaskWoken;
 	xHigherPriorityTaskWoken = pdFALSE;
-	vTaskNotifyGiveFromISR(button_task_handle, &xHigherPriorityTaskWoken);
+	vTaskNotifyGiveFromISR(bluetooth_task_handle, &xHigherPriorityTaskWoken);
 	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
 }
 
@@ -148,11 +148,11 @@ void button_interrupt_handler(void *handler_arg, cyhal_gpio_event_t event)
 {
     BaseType_t xHigherPriorityTaskWoken;
     xHigherPriorityTaskWoken = pdFALSE;
-    vTaskNotifyGiveFromISR(button_task_handle, &xHigherPriorityTaskWoken);
+    vTaskNotifyGiveFromISR(bluetooth_task_handle, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
 }
 
-void button_task(void *pvParameters)
+void bluetooth_task(void *pvParameters)
 {
 	/* Configure platform specific settings for the BT device */
 	      cybt_platform_config_init(&cybsp_bt_platform_cfg);

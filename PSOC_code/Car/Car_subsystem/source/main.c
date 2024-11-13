@@ -17,7 +17,7 @@
 
 
 volatile int uxTopUsedPriority;
-TaskHandle_t  button_task_handle;
+TaskHandle_t  bluetooth_task_handle;
 TaskHandle_t  mqtt_task_handle;
 
 int main()
@@ -56,16 +56,16 @@ int main()
            printf("Failed to create MQTT task! \n");
            CY_ASSERT(0);
        }
-/*
+
     // Create BLE button Task for processing button presses
-    rtos_result = xTaskCreate(button_task,"bluetooth_task", BUTTON_TASK_STACK_SIZE,
-                               NULL, BUTTON_TASK_PRIORITY, &button_task_handle);
+    rtos_result = xTaskCreate(bluetooth_task,"bluetooth_task", BLUETOOTH_TASK_STACK_SIZE,
+                               NULL, BLUETOOTH_TASK_PRIORITY, &bluetooth_task_handle);
     if( pdPASS != rtos_result)
     {
         printf("Failed to create bluetooth task! \n");
         CY_ASSERT(0);
     }
-*/
+
     /* Start the FreeRTOS scheduler. */
     vTaskStartScheduler();
 
