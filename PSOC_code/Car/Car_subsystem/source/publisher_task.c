@@ -186,30 +186,30 @@ void publisher_task(void *pvParameters)
                 case PUBLISH_MQTT_MSG:
                 {
                 	// Wake the MPU6050 up from sleep mode
-                	                	MPU6050_i2c_config();
-                	                	// Read accelerometer registers
-                	                	MPU6050_i2c_accelerometer(&publisher_q_data.accel_x, &publisher_q_data.accel_y,
-                	                							&publisher_q_data.accel_z, &publisher_q_data.magnitude);
-                	                	// Read temperature registers
-                	                	MPU6050_i2c_tempRead(&publisher_q_data.temperature);
-                	                	// Read gyroscope registers
-                	                	MPU6050_i2c_gyroscoop(&publisher_q_data.gyro_x, &publisher_q_data.gyro_y, &publisher_q_data.gyro_z);
-                	                    /* Publish the data received over the message queue. */
-                	                	char payload_buffer[MQTT_PAYLOAD_SIZE];  // Allocate enough space for the formatted string
+                	               MPU6050_i2c_config();
+                	               // Read accelerometer registers
+                	               MPU6050_i2c_accelerometer(&publisher_q_data.accel_x, &publisher_q_data.accel_y,
+                	               						&publisher_q_data.accel_z, &publisher_q_data.magnitude);
+                	               // Read temperature registers
+                	               MPU6050_i2c_tempRead(&publisher_q_data.temperature);
+                	               // Read gyroscope registers
+                	               MPU6050_i2c_gyroscoop(&publisher_q_data.gyro_x, &publisher_q_data.gyro_y, &publisher_q_data.gyro_z);
+                	                /* Publish the data received over the message queue. */
+                	               char payload_buffer[MQTT_PAYLOAD_SIZE];  // Allocate enough space for the formatted string
 
-                	                	// Format the data into the buffer as JSON or similar format
-                	                	snprintf(payload_buffer, sizeof(payload_buffer),
-                	                	         "{"
-                	                	         "\"accel_x\": %.2f, \"accel_y\": %.2f, \"accel_z\": %.2f, \"magnitude\": %.2f, "
-                	                	         "\"gyro_x\": %.2f, \"gyro_y\": %.2f, \"gyro_z\": %.2f, "
-                	                	         "\"temperature\": %.2f"
-                	                	         "}",
-                	                	         publisher_q_data.accel_x, publisher_q_data.accel_y, publisher_q_data.accel_z,
-                	                	         publisher_q_data.magnitude,
-                	                	         publisher_q_data.gyro_x, publisher_q_data.gyro_y, publisher_q_data.gyro_z,
-                	                	         publisher_q_data.temperature);
-                	                	publish_info.payload = payload_buffer;
-                	                    publish_info.payload_len = strlen(publish_info.payload);
+                	               // Format the data into the buffer as JSON or similar format
+                	               snprintf(payload_buffer, sizeof(payload_buffer),
+                	                        "{"
+                	                        "\"accel_x\": %.2f, \"accel_y\": %.2f, \"accel_z\": %.2f, \"magnitude\": %.2f, "
+                	                        "\"gyro_x\": %.2f, \"gyro_y\": %.2f, \"gyro_z\": %.2f, "
+                	                        "\"temperature\": %.2f"
+                	                        "}",
+                	                        publisher_q_data.accel_x, publisher_q_data.accel_y, publisher_q_data.accel_z,
+                	                        publisher_q_data.magnitude,
+                	                        publisher_q_data.gyro_x, publisher_q_data.gyro_y, publisher_q_data.gyro_z,
+                	                        publisher_q_data.temperature);
+                	               publish_info.payload = payload_buffer;
+                	                publish_info.payload_len = strlen(publish_info.payload);
 
                     /*printf("\nPublisher: Publishing '%s' on the topic '%s'\n",
                            (char *) publish_info.payload, publish_info.topic);
