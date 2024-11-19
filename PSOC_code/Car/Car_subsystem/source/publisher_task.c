@@ -211,9 +211,9 @@ void publisher_task(void *pvParameters)
                 	                	publish_info.payload = payload_buffer;
                 	                    publish_info.payload_len = strlen(publish_info.payload);
 
-                    //printf("\nPublisher: Publishing '%s' on the topic '%s'\n",
-                      //     (char *) publish_info.payload, publish_info.topic);
-
+                    /*printf("\nPublisher: Publishing '%s' on the topic '%s'\n",
+                           (char *) publish_info.payload, publish_info.topic);
+*/
                     result = cy_mqtt_publish(mqtt_connection, &publish_info);
 
                     if (result != CY_RSLT_SUCCESS)

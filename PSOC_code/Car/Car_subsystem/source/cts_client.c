@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include "wiced_bt_uuid.h"
 #include "wiced_bt_types.h"
+#include "motor.h"
 
 static uint16_t                    bt_connection_id = 0;
 static cts_discovery_data_t        cts_discovery_data;
@@ -466,7 +467,7 @@ static wiced_bt_gatt_status_t ble_app_write_notification_cccd(bool notify)
 
 static void handle_received_data_from_controller(wiced_bt_gatt_data_t notif_data)
 {
-	joystickData dataToSend;
+	joystickData_t dataToSend;
 	dataToSend.x = notif_data.p_data[0];
 	dataToSend.y = notif_data.p_data[1];
 

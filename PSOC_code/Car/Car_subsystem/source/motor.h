@@ -7,7 +7,12 @@
 
 #ifndef SOURCE_MOTOR_H_
 #define SOURCE_MOTOR_H_
-
+#include "cyhal.h"
+#include "FreeRTOS.h"
+#include "queue.h"
+#include "stdio.h"
+#include "cybsp.h"
+#include "cyhal.h"
 // define motor pins connections
 #define motorPinA1 P9_1
 #define motorPinA2 P9_2
@@ -27,10 +32,10 @@ extern cyhal_pwm_t pwm_obj_motorB2;
 typedef struct{
 	u_int8_t x;
 	u_int8_t y;
-}joystickData;
+}joystickData_t;
 
 // Queue handle for sending joystick data
-QueueHandle_t joystickDataQueueHandle;
+extern QueueHandle_t joystickDataQueueHandle;
 
 // define motor functions
 void initMotorGPIO();

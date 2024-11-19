@@ -4,18 +4,19 @@ import threading
 from flask_socketio import SocketIO, emit
 import json
 import time
+import logging
 
 # Flask app initialization
 app = Flask(__name__)
 socketio = SocketIO(app)
 
 # MQTT configuration
-MQTT_BROKER = 'api.allthingstalk.io'
-MQTT_PORT = 1883
-MQTT_TOPIC = 'device/9iWQhUO01zAzTWerwXReY0F1/asset/MPU6050/state'
-MQTT_QOS = 1
-MQTT_USERNAME = 'maker:4Q7A7BfBfKjja5HNKxeLUUFXN429PotKxe1WNVCS'  # Replace with your actual username
-MQTT_PASSWORD = 'Darren'  # Replace with your actual password
+MQTT_BROKER = '1f921750cd3c40f8a5b596c38018d775.s1.eu.hivemq.cloud'
+MQTT_PORT = 8883
+MQTT_TOPIC = 'MPU6050'
+MQTT_QOS = 0
+MQTT_USERNAME = 'hivemq.webclient.1732014074548'  # Replace with your actual username
+MQTT_PASSWORD = 'GA9EB182CwsHfevb:,<;'  # Replace with your actual password
 
 # Variables to hold the latest received data and previous timestamp
 mqtt_message = ""
@@ -70,10 +71,20 @@ def on_message(client, userdata, message):
 def mqtt_setup():
     client = mqtt.Client()
     client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)  # Set the credentials
+    # Set TLS configuration
+    client.tls_set(
+        ca_certs="isrgrootx1.pem",  # Path to the HiveMQ root CA certificate
+        certfile=None,
+        keyfile=None
+    )
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
+    client.enable_logger()
+    client.tls_insecure_set(False)  # Enforce server certificate validation
     client.on_message = on_message
     client.connect(MQTT_BROKER, MQTT_PORT)
     client.subscribe(MQTT_TOPIC, qos=MQTT_QOS)
-    client.loop_forever()
+   
 
 # Start MQTT listener in a separate thread
 def start_mqtt_thread():

@@ -229,7 +229,7 @@ void mqtt_client_task(void *pvParameters)
         goto exit_cleanup;
     }
 
-    //print_heap_usage("mqtt_client_task: subscriber & publisher tasks created\n");
+    print_heap_usage("mqtt_client_task: subscriber & publisher tasks created\n");
 
     while (true)
     {
