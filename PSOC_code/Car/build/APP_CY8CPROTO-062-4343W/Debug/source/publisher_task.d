@@ -1,5 +1,5 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/publisher_task.o: \
- C:/Users/raufp/mtw/Car_subsystem/source/publisher_task.c \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/source/publisher_task.o: \
+ C:/Users/raufp/mtw/Car/source/publisher_task.c \
  ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal.h \
  ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal_general_types.h \
  ../mtb_shared/core-lib/release-v1.4.2/include/cy_result.h \
@@ -258,12 +258,12 @@ C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/publ
  ../mtb_shared/freertos/release-v10.5.002/Source/include/deprecated_definitions.h \
  ../mtb_shared/freertos/release-v10.5.002/Source/portable/COMPONENT_CM4/TOOLCHAIN_GCC_ARM/portmacro.h \
  ../mtb_shared/freertos/release-v10.5.002/Source/include/mpu_wrappers.h \
- C:/Users/raufp/mtw/Car_subsystem/source/publisher_task.h \
+ C:/Users/raufp/mtw/Car/source/publisher_task.h \
  ../mtb_shared/freertos/release-v10.5.002/Source/include/task.h \
  ../mtb_shared/freertos/release-v10.5.002/Source/include/list.h \
  ../mtb_shared/freertos/release-v10.5.002/Source/include/queue.h \
  ../mtb_shared/freertos/release-v10.5.002/Source/include/task.h \
- C:/Users/raufp/mtw/Car_subsystem/source/mqtt_task.h \
+ C:/Users/raufp/mtw/Car/source/mqtt_task.h \
  ../mtb_shared/mqtt/release-v4.6.1/include/cy_mqtt_api.h \
  ../mtb_shared/connectivity-utilities/release-v4.5.0/cy_result_mw.h \
  ../mtb_shared/connectivity-utilities/release-v4.5.0/network/cy_nw_helper.h \
@@ -285,10 +285,10 @@ C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/publ
  ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_secure_sockets_constants.h \
  ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_tls.h \
  ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_tls.h \
- C:/Users/raufp/mtw/Car_subsystem/source/subscriber_task.h \
+ C:/Users/raufp/mtw/Car/source/subscriber_task.h \
  configs/mqtt_client_config.h \
  ../mtb_shared/retarget-io/release-v1.6.0/include/cy_retarget_io.h \
- C:/Users/raufp/mtw/Car_subsystem/source/cts_client.h \
+ C:/Users/raufp/mtw/Car/source/cts_client.h \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_dev.h \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_types.h \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_data_types.h \
@@ -297,7 +297,7 @@ C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/publ
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_version.h \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/hcidefs.h \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_sco.h \
- C:/Users/raufp/mtw/Car_subsystem/source/MPU6050.h
+ C:/Users/raufp/mtw/Car/source/MPU6050.h
 ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal.h:
 ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal_general_types.h:
 ../mtb_shared/core-lib/release-v1.4.2/include/cy_result.h:
@@ -556,12 +556,12 @@ bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_system.h:
 ../mtb_shared/freertos/release-v10.5.002/Source/include/deprecated_definitions.h:
 ../mtb_shared/freertos/release-v10.5.002/Source/portable/COMPONENT_CM4/TOOLCHAIN_GCC_ARM/portmacro.h:
 ../mtb_shared/freertos/release-v10.5.002/Source/include/mpu_wrappers.h:
-C:/Users/raufp/mtw/Car_subsystem/source/publisher_task.h:
+C:/Users/raufp/mtw/Car/source/publisher_task.h:
 ../mtb_shared/freertos/release-v10.5.002/Source/include/task.h:
 ../mtb_shared/freertos/release-v10.5.002/Source/include/list.h:
 ../mtb_shared/freertos/release-v10.5.002/Source/include/queue.h:
 ../mtb_shared/freertos/release-v10.5.002/Source/include/task.h:
-C:/Users/raufp/mtw/Car_subsystem/source/mqtt_task.h:
+C:/Users/raufp/mtw/Car/source/mqtt_task.h:
 ../mtb_shared/mqtt/release-v4.6.1/include/cy_mqtt_api.h:
 ../mtb_shared/connectivity-utilities/release-v4.5.0/cy_result_mw.h:
 ../mtb_shared/connectivity-utilities/release-v4.5.0/network/cy_nw_helper.h:
@@ -583,10 +583,10 @@ C:/Users/raufp/mtw/Car_subsystem/source/mqtt_task.h:
 ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_secure_sockets_constants.h:
 ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_tls.h:
 ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_tls.h:
-C:/Users/raufp/mtw/Car_subsystem/source/subscriber_task.h:
+C:/Users/raufp/mtw/Car/source/subscriber_task.h:
 configs/mqtt_client_config.h:
 ../mtb_shared/retarget-io/release-v1.6.0/include/cy_retarget_io.h:
-C:/Users/raufp/mtw/Car_subsystem/source/cts_client.h:
+C:/Users/raufp/mtw/Car/source/cts_client.h:
 ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_dev.h:
 ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_types.h:
 ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_data_types.h:
@@ -595,4 +595,4 @@ C:/Users/raufp/mtw/Car_subsystem/source/cts_client.h:
 ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_version.h:
 ../mtb_shared/btstack/release-v3.9.2/wiced_include/hcidefs.h:
 ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_sco.h:
-C:/Users/raufp/mtw/Car_subsystem/source/MPU6050.h:
+C:/Users/raufp/mtw/Car/source/MPU6050.h:

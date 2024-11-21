@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/btstack-integration/release-v4.7.0/COMPONENT_HCI-UART/common/cybt_host_stack_platform_interface.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/btstack-integration/release-v4.7.0/COMPONENT_HCI-UART/common/cybt_host_stack_platform_interface.o: \
  c:\users\raufp\mtw\mtb_shared\btstack-integration\release-v4.7.0\component_hci-uart\common\cybt_host_stack_platform_interface.c \
  ../mtb_shared/abstraction-rtos/release-v1.8.2/include/cyabs_rtos.h \
  ../mtb_shared/abstraction-rtos/release-v1.8.2/include/COMPONENT_FREERTOS/cyabs_rtos_impl.h \

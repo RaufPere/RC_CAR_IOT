@@ -1,5 +1,5 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/mqtt_task.o: \
- C:/Users/raufp/mtw/Car_subsystem/source/mqtt_task.c \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/source/mqtt_task.o: \
+ C:/Users/raufp/mtw/Car/source/mqtt_task.c \
  ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal.h \
  ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal_general_types.h \
  ../mtb_shared/core-lib/release-v1.4.2/include/cy_result.h \
@@ -260,7 +260,7 @@ C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/mqtt
  ../mtb_shared/freertos/release-v10.5.002/Source/include/mpu_wrappers.h \
  ../mtb_shared/freertos/release-v10.5.002/Source/include/task.h \
  ../mtb_shared/freertos/release-v10.5.002/Source/include/list.h \
- C:/Users/raufp/mtw/Car_subsystem/source/mqtt_task.h \
+ C:/Users/raufp/mtw/Car/source/mqtt_task.h \
  ../mtb_shared/freertos/release-v10.5.002/Source/include/queue.h \
  ../mtb_shared/freertos/release-v10.5.002/Source/include/task.h \
  ../mtb_shared/mqtt/release-v4.6.1/include/cy_mqtt_api.h \
@@ -284,9 +284,8 @@ C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/mqtt
  ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_secure_sockets_constants.h \
  ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_tls.h \
  ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_tls.h \
- C:/Users/raufp/mtw/Car_subsystem/source/subscriber_task.h \
- C:/Users/raufp/mtw/Car_subsystem/source/publisher_task.h \
- configs/wifi_config.h \
+ C:/Users/raufp/mtw/Car/source/subscriber_task.h \
+ C:/Users/raufp/mtw/Car/source/publisher_task.h configs/wifi_config.h \
  ../mtb_shared/wifi-connection-manager/release-v3.6.0/include/cy_wcm.h \
  ../mtb_shared/wifi-connection-manager/release-v3.6.0/include/cy_wcm_error.h \
  ../mtb_shared/wifi-host-driver/release-v4.2.0/WHD/COMPONENT_WIFI5/inc/whd_types.h \
@@ -572,7 +571,7 @@ bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_system.h:
 ../mtb_shared/freertos/release-v10.5.002/Source/include/mpu_wrappers.h:
 ../mtb_shared/freertos/release-v10.5.002/Source/include/task.h:
 ../mtb_shared/freertos/release-v10.5.002/Source/include/list.h:
-C:/Users/raufp/mtw/Car_subsystem/source/mqtt_task.h:
+C:/Users/raufp/mtw/Car/source/mqtt_task.h:
 ../mtb_shared/freertos/release-v10.5.002/Source/include/queue.h:
 ../mtb_shared/freertos/release-v10.5.002/Source/include/task.h:
 ../mtb_shared/mqtt/release-v4.6.1/include/cy_mqtt_api.h:
@@ -596,8 +595,8 @@ C:/Users/raufp/mtw/Car_subsystem/source/mqtt_task.h:
 ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_secure_sockets_constants.h:
 ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_tls.h:
 ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_tls.h:
-C:/Users/raufp/mtw/Car_subsystem/source/subscriber_task.h:
-C:/Users/raufp/mtw/Car_subsystem/source/publisher_task.h:
+C:/Users/raufp/mtw/Car/source/subscriber_task.h:
+C:/Users/raufp/mtw/Car/source/publisher_task.h:
 configs/wifi_config.h:
 ../mtb_shared/wifi-connection-manager/release-v3.6.0/include/cy_wcm.h:
 ../mtb_shared/wifi-connection-manager/release-v3.6.0/include/cy_wcm_error.h:

@@ -1,5 +1,5 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/main.o: \
- C:/Users/raufp/mtw/Car_subsystem/source/main.c \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/source/main.o: \
+ C:/Users/raufp/mtw/Car/source/main.c \
  bsps/TARGET_APP_CY8CPROTO-062-4343W/bluetooth/cybsp_bt_config.h \
  ../mtb_shared/btstack-integration/release-v4.7.0/COMPONENT_HCI-UART/include/cybt_platform_config.h \
  ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal_gpio.h \
@@ -206,7 +206,7 @@ C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/main
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_ble.h \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_isoc.h \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_constants.h \
- C:/Users/raufp/mtw/Car_subsystem/source/cts_client.h \
+ C:/Users/raufp/mtw/Car/source/cts_client.h \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_dev.h \
  ../mtb_shared/freertos/release-v10.5.002/Source/include/FreeRTOS.h \
  source/FreeRTOSConfig.h \
@@ -279,7 +279,7 @@ C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/main
  bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_clocks.h \
  bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_peripherals.h \
  ../mtb_shared/retarget-io/release-v1.6.0/include/cy_retarget_io.h \
- C:/Users/raufp/mtw/Car_subsystem/source/mqtt_task.h \
+ C:/Users/raufp/mtw/Car/source/mqtt_task.h \
  ../mtb_shared/freertos/release-v10.5.002/Source/include/queue.h \
  ../mtb_shared/freertos/release-v10.5.002/Source/include/task.h \
  ../mtb_shared/mqtt/release-v4.6.1/include/cy_mqtt_api.h \
@@ -303,7 +303,7 @@ C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/main
  ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_secure_sockets_constants.h \
  ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_tls.h \
  ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_tls.h \
- C:/Users/raufp/mtw/Car_subsystem/source/motor.h
+ C:/Users/raufp/mtw/Car/source/motor.h
 bsps/TARGET_APP_CY8CPROTO-062-4343W/bluetooth/cybsp_bt_config.h:
 ../mtb_shared/btstack-integration/release-v4.7.0/COMPONENT_HCI-UART/include/cybt_platform_config.h:
 ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal_gpio.h:
@@ -510,7 +510,7 @@ GeneratedSource/cycfg_bt_settings.h:
 ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_ble.h:
 ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_isoc.h:
 ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_constants.h:
-C:/Users/raufp/mtw/Car_subsystem/source/cts_client.h:
+C:/Users/raufp/mtw/Car/source/cts_client.h:
 ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_dev.h:
 ../mtb_shared/freertos/release-v10.5.002/Source/include/FreeRTOS.h:
 source/FreeRTOSConfig.h:
@@ -583,7 +583,7 @@ bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_pins.h:
 bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_clocks.h:
 bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_peripherals.h:
 ../mtb_shared/retarget-io/release-v1.6.0/include/cy_retarget_io.h:
-C:/Users/raufp/mtw/Car_subsystem/source/mqtt_task.h:
+C:/Users/raufp/mtw/Car/source/mqtt_task.h:
 ../mtb_shared/freertos/release-v10.5.002/Source/include/queue.h:
 ../mtb_shared/freertos/release-v10.5.002/Source/include/task.h:
 ../mtb_shared/mqtt/release-v4.6.1/include/cy_mqtt_api.h:
@@ -607,4 +607,4 @@ C:/Users/raufp/mtw/Car_subsystem/source/mqtt_task.h:
 ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_secure_sockets_constants.h:
 ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_tls.h:
 ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_tls.h:
-C:/Users/raufp/mtw/Car_subsystem/source/motor.h:
+C:/Users/raufp/mtw/Car/source/motor.h:

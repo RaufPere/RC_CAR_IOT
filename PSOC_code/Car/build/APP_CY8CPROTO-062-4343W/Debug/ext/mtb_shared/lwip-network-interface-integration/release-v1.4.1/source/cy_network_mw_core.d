@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/lwip-network-interface-integration/release-v1.4.1/source/cy_network_mw_core.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/lwip-network-interface-integration/release-v1.4.1/source/cy_network_mw_core.o: \
  c:\users\raufp\mtw\mtb_shared\lwip-network-interface-integration\release-v1.4.1\source\cy_network_mw_core.c \
  ../mtb_shared/wifi-core-freertos-lwip-mbedtls/release-v2.1.0/configs/lwipopts.h \
  ../mtb_shared/wifi-host-driver/release-v4.2.0/WHD/COMPONENT_WIFI5/inc/whd_types.h \

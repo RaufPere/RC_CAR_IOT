@@ -1,6 +1,6 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/bsps/TARGET_APP_CY8CPROTO-062-4343W/bluetooth/cybsp_bt_config.o: \
- C:/Users/raufp/mtw/Car_subsystem/bsps/TARGET_APP_CY8CPROTO-062-4343W/bluetooth/cybsp_bt_config.c \
- C:/Users/raufp/mtw/Car_subsystem/bsps/TARGET_APP_CY8CPROTO-062-4343W/bluetooth/cybsp_bt_config.h \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/bsps/TARGET_APP_CY8CPROTO-062-4343W/bluetooth/cybsp_bt_config.o: \
+ C:/Users/raufp/mtw/Car/bsps/TARGET_APP_CY8CPROTO-062-4343W/bluetooth/cybsp_bt_config.c \
+ C:/Users/raufp/mtw/Car/bsps/TARGET_APP_CY8CPROTO-062-4343W/bluetooth/cybsp_bt_config.h \
  ../mtb_shared/btstack-integration/release-v4.7.0/COMPONENT_HCI-UART/include/cybt_platform_config.h \
  ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal_gpio.h \
  ../mtb_shared/core-lib/release-v1.4.2/include/cy_result.h \
@@ -200,7 +200,7 @@ C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/bsps/TARGET
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_version.h \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/hcidefs.h \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_sco.h
-C:/Users/raufp/mtw/Car_subsystem/bsps/TARGET_APP_CY8CPROTO-062-4343W/bluetooth/cybsp_bt_config.h:
+C:/Users/raufp/mtw/Car/bsps/TARGET_APP_CY8CPROTO-062-4343W/bluetooth/cybsp_bt_config.h:
 ../mtb_shared/btstack-integration/release-v4.7.0/COMPONENT_HCI-UART/include/cybt_platform_config.h:
 ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal_gpio.h:
 ../mtb_shared/core-lib/release-v1.4.2/include/cy_result.h:

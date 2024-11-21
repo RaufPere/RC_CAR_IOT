@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/btstack-integration/release-v4.7.0/COMPONENT_HCI-UART/freertos/cybt_platform_freertos.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/btstack-integration/release-v4.7.0/COMPONENT_HCI-UART/freertos/cybt_platform_freertos.o: \
  c:\users\raufp\mtw\mtb_shared\btstack-integration\release-v4.7.0\component_hci-uart\freertos\cybt_platform_freertos.c \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_data_types.h \
  bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg.h \

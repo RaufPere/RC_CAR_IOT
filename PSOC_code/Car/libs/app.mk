@@ -4,7 +4,7 @@
 # the next time 'make getlibs' is run.
 #
 bsp-assistant capsense-configurator capsense-tuner config device-configurator config_ezpd ez-pd-configurator modlibs library-manager qspi-configurator seglcd-configurator smartio-configurator config_usbdev usbdev-configurator :
-	make -C Car_subsystem $@
+	make -C Car $@
 
 config_bt bt-configurator config_lin lin-configurator :
 	$(error $@ configurator cannot be executed at the application level. Run this command from the desired project directory.)

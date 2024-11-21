@@ -1,5 +1,5 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/mqtt_client_config.o: \
- C:/Users/raufp/mtw/Car_subsystem/source/mqtt_client_config.c \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/source/mqtt_client_config.o: \
+ C:/Users/raufp/mtw/Car/source/mqtt_client_config.c \
  configs/mqtt_client_config.h \
  ../mtb_shared/mqtt/release-v4.6.1/include/cy_mqtt_api.h \
  ../mtb_shared/connectivity-utilities/release-v4.5.0/cy_result_mw.h \

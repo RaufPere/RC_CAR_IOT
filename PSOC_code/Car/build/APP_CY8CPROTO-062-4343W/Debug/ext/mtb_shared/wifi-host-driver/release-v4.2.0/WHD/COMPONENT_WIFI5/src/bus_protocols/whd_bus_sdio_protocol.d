@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/wifi-host-driver/release-v4.2.0/WHD/COMPONENT_WIFI5/src/bus_protocols/whd_bus_sdio_protocol.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/wifi-host-driver/release-v4.2.0/WHD/COMPONENT_WIFI5/src/bus_protocols/whd_bus_sdio_protocol.o: \
  c:\users\raufp\mtw\mtb_shared\wifi-host-driver\release-v4.2.0\whd\component_wifi5\src\bus_protocols\whd_bus_sdio_protocol.c \
  bsps/TARGET_APP_CY8CPROTO-062-4343W/cybsp.h \
  ../mtb_shared/core-lib/release-v1.4.2/include/cy_result.h \

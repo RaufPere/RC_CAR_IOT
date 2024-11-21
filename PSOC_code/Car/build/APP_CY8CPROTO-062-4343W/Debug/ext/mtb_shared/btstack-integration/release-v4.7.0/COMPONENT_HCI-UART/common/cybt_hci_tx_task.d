@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/btstack-integration/release-v4.7.0/COMPONENT_HCI-UART/common/cybt_hci_tx_task.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/btstack-integration/release-v4.7.0/COMPONENT_HCI-UART/common/cybt_hci_tx_task.o: \
  c:\users\raufp\mtw\mtb_shared\btstack-integration\release-v4.7.0\component_hci-uart\common\cybt_hci_tx_task.c \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/hcidefs.h \
  c:\users\raufp\mtw\mtb_shared\btstack-integration\release-v4.7.0\component_hci-uart\common\cybt_platform_task.h \

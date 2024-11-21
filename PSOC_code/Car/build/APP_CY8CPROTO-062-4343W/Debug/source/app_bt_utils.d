@@ -1,6 +1,6 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/app_bt_utils.o: \
- C:/Users/raufp/mtw/Car_subsystem/source/app_bt_utils.c \
- C:/Users/raufp/mtw/Car_subsystem/source/app_bt_utils.h \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/source/app_bt_utils.o: \
+ C:/Users/raufp/mtw/Car/source/app_bt_utils.c \
+ C:/Users/raufp/mtw/Car/source/app_bt_utils.h \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_dev.h \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_types.h \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_data_types.h \
@@ -17,7 +17,7 @@ C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/app_
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_isoc.h \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/l2cdefs.h \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_uuid.h
-C:/Users/raufp/mtw/Car_subsystem/source/app_bt_utils.h:
+C:/Users/raufp/mtw/Car/source/app_bt_utils.h:
 ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_dev.h:
 ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_types.h:
 ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_data_types.h:

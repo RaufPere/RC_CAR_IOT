@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/btstack-integration/release-v4.7.0/COMPONENT_HCI-UART/common/cybt_platform_main.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/btstack-integration/release-v4.7.0/COMPONENT_HCI-UART/common/cybt_platform_main.o: \
  c:\users\raufp\mtw\mtb_shared\btstack-integration\release-v4.7.0\component_hci-uart\common\cybt_platform_main.c \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_dev.h \
  ../mtb_shared/btstack/release-v3.9.2/wiced_include/wiced_bt_types.h \

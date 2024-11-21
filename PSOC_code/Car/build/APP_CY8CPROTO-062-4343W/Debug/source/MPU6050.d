@@ -1,5 +1,5 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/MPU6050.o: \
- C:/Users/raufp/mtw/Car_subsystem/source/MPU6050.c source/MPU6050.h \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/source/MPU6050.o: \
+ C:/Users/raufp/mtw/Car/source/MPU6050.c source/MPU6050.h \
  bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg.h \
  bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_notices.h \
  bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_system.h \

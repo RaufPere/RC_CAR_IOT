@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/lwip/STABLE-2_1_2_RELEASE/src/api/netdb.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/lwip/STABLE-2_1_2_RELEASE/src/api/netdb.o: \
  c:\users\raufp\mtw\mtb_shared\lwip\stable-2_1_2_release\src\api\netdb.c \
  ../mtb_shared/lwip/STABLE-2_1_2_RELEASE/src/include/lwip/netdb.h \
  ../mtb_shared/lwip/STABLE-2_1_2_RELEASE/src/include/lwip/opt.h \

@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/wifi-host-driver/release-v4.2.0/WHD/COMPONENT_WIFI5/resources/resource_imp/whd_resources.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/wifi-host-driver/release-v4.2.0/WHD/COMPONENT_WIFI5/resources/resource_imp/whd_resources.o: \
  c:\users\raufp\mtw\mtb_shared\wifi-host-driver\release-v4.2.0\whd\component_wifi5\resources\resource_imp\whd_resources.c \
  ../mtb_shared/wifi-host-driver/release-v4.2.0/WHD/COMPONENT_WIFI5/resources/firmware/COMPONENT_4343W/resources.h \
  ../mtb_shared/wifi-host-driver/release-v4.2.0/WHD/COMPONENT_WIFI5/resources/resource_imp/wiced_resource.h \

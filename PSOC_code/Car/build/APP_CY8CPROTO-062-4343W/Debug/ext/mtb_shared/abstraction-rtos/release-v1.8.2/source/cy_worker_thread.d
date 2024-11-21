@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/abstraction-rtos/release-v1.8.2/source/cy_worker_thread.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/abstraction-rtos/release-v1.8.2/source/cy_worker_thread.o: \
  c:\users\raufp\mtw\mtb_shared\abstraction-rtos\release-v1.8.2\source\cy_worker_thread.c \
  ../mtb_shared/abstraction-rtos/release-v1.8.2/include/cy_worker_thread.h \
  ../mtb_shared/core-lib/release-v1.4.2/include/cy_result.h \

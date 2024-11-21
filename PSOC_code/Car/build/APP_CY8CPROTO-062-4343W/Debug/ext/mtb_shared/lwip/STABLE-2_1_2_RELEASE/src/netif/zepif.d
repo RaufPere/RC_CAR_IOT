@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/lwip/STABLE-2_1_2_RELEASE/src/netif/zepif.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/lwip/STABLE-2_1_2_RELEASE/src/netif/zepif.o: \
  c:\users\raufp\mtw\mtb_shared\lwip\stable-2_1_2_release\src\netif\zepif.c \
  ../mtb_shared/lwip/STABLE-2_1_2_RELEASE/src/include/netif/zepif.h \
  ../mtb_shared/lwip/STABLE-2_1_2_RELEASE/src/include/lwip/opt.h \

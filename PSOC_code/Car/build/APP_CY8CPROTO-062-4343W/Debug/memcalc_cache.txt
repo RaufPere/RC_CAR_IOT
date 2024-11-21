@@ -2,10 +2,10 @@
   | Section Name         |  Address      |  Size       | 
    ---------------------------------------------------- 
   | .cy_m0p_image        |  0x10000000   |  6352       | 
-  | .text                |  0x10002000   |  1044696    | 
-  | .ARM.exidx           |  0x101010d8   |  8          | 
-  | .copy.table          |  0x101010e0   |  24         | 
-  | .zero.table          |  0x101010f8   |  8          | 
+  | .text                |  0x10002000   |  1044744    | 
+  | .ARM.exidx           |  0x10101108   |  8          | 
+  | .copy.table          |  0x10101110   |  24         | 
+  | .zero.table          |  0x10101128   |  8          | 
   | .data                |  0x080022e0   |  2328       | 
   | .cy_sharedmem        |  0x08002bf8   |  8          | 
   | .noinit              |  0x08002c00   |  228        | 
@@ -14,5 +14,5 @@
    ---------------------------------------------------- 
 
   Total Internal Flash (Available)          2097152    
-  Total Internal Flash (Utilized)           1055264    
+  Total Internal Flash (Utilized)           1055312    
 

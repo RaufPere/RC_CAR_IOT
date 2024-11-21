@@ -1,5 +1,5 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/bsps/TARGET_APP_CY8CPROTO-062-4343W/COMPONENT_CM4/system_psoc6_cm4.o: \
- C:/Users/raufp/mtw/Car_subsystem/bsps/TARGET_APP_CY8CPROTO-062-4343W/COMPONENT_CM4/system_psoc6_cm4.c \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/bsps/TARGET_APP_CY8CPROTO-062-4343W/COMPONENT_CM4/system_psoc6_cm4.o: \
+ C:/Users/raufp/mtw/Car/bsps/TARGET_APP_CY8CPROTO-062-4343W/COMPONENT_CM4/system_psoc6_cm4.c \
  bsps/TARGET_APP_CY8CPROTO-062-4343W/system_psoc6.h \
  ../mtb_shared/mtb-pdl-cat1/release-v3.12.1/devices/COMPONENT_CAT1A/include/cy_device.h \
  ../mtb_shared/mtb-pdl-cat1/release-v3.12.1/devices/COMPONENT_CAT1A/include/cy_device_headers.h \

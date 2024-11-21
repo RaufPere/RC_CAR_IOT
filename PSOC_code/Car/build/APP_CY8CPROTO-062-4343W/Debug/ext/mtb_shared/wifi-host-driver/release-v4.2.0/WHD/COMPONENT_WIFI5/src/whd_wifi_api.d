@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/wifi-host-driver/release-v4.2.0/WHD/COMPONENT_WIFI5/src/whd_wifi_api.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/wifi-host-driver/release-v4.2.0/WHD/COMPONENT_WIFI5/src/whd_wifi_api.o: \
  c:\users\raufp\mtw\mtb_shared\wifi-host-driver\release-v4.2.0\whd\component_wifi5\src\whd_wifi_api.c \
  ../mtb_shared/wifi-host-driver/release-v4.2.0/WHD/COMPONENT_WIFI5/inc/whd_version.h \
  ../mtb_shared/wifi-host-driver/release-v4.2.0/WHD/COMPONENT_WIFI5/src/include/whd_chip_constants.h \

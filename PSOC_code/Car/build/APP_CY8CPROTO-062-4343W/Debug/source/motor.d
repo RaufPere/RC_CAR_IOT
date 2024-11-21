@@ -1,6 +1,6 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/motor.o: \
- C:/Users/raufp/mtw/Car_subsystem/source/motor.c \
- C:/Users/raufp/mtw/Car_subsystem/source/motor.h \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/source/motor.o: \
+ C:/Users/raufp/mtw/Car/source/motor.c \
+ C:/Users/raufp/mtw/Car/source/motor.h \
  ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal.h \
  ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal_general_types.h \
  ../mtb_shared/core-lib/release-v1.4.2/include/cy_result.h \
@@ -262,7 +262,7 @@ C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/source/moto
  bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_peripherals.h \
  bsps/TARGET_APP_CY8CPROTO-062-4343W/bluetooth/cybsp_bt_config.h \
  ../mtb_shared/btstack-integration/release-v4.7.0/COMPONENT_HCI-UART/include/cybt_platform_config.h
-C:/Users/raufp/mtw/Car_subsystem/source/motor.h:
+C:/Users/raufp/mtw/Car/source/motor.h:
 ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal.h:
 ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal_general_types.h:
 ../mtb_shared/core-lib/release-v1.4.2/include/cy_result.h:

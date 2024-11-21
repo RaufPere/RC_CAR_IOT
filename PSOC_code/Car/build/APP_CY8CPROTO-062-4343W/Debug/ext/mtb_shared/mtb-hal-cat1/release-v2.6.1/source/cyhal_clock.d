@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/mtb-hal-cat1/release-v2.6.1/source/cyhal_clock.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/mtb-hal-cat1/release-v2.6.1/source/cyhal_clock.o: \
  c:\users\raufp\mtw\mtb_shared\mtb-hal-cat1\release-v2.6.1\source\cyhal_clock.c \
  ../mtb_shared/mtb-pdl-cat1/release-v3.12.1/drivers/include/cy_sysclk.h \
  ../mtb_shared/mtb-pdl-cat1/release-v3.12.1/devices/COMPONENT_CAT1A/include/cy_device.h \

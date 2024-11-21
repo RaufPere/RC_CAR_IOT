@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/whd-bsp-integration/release-v2.3.0/cybsp_wifi.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/whd-bsp-integration/release-v2.3.0/cybsp_wifi.o: \
  c:\users\raufp\mtw\mtb_shared\whd-bsp-integration\release-v2.3.0\cybsp_wifi.c \
  bsps/TARGET_APP_CY8CPROTO-062-4343W/cybsp.h \
  ../mtb_shared/core-lib/release-v1.4.2/include/cy_result.h \

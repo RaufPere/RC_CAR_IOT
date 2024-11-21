@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/lwip/STABLE-2_1_2_RELEASE/src/core/netif.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/lwip/STABLE-2_1_2_RELEASE/src/core/netif.o: \
  c:\users\raufp\mtw\mtb_shared\lwip\stable-2_1_2_release\src\core\netif.c \
  ../mtb_shared/lwip/STABLE-2_1_2_RELEASE/src/include/lwip/opt.h \
  ../mtb_shared/wifi-core-freertos-lwip-mbedtls/release-v2.1.0/configs/lwipopts.h \

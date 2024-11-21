@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/wifi-connection-manager/release-v3.6.0/source/cy_wcm.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/wifi-connection-manager/release-v3.6.0/source/cy_wcm.o: \
  c:\users\raufp\mtw\mtb_shared\wifi-connection-manager\release-v3.6.0\source\cy_wcm.c \
  ../mtb_shared/wifi-connection-manager/release-v3.6.0/include/cy_wcm.h \
  ../mtb_shared/core-lib/release-v1.4.2/include/cy_result.h \

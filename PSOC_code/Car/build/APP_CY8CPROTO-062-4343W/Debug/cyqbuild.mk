@@ -10,10 +10,10 @@ CY_SEARCH_ALL_FILES:= \
   LICENSE \
   Makefile \
   README.md \
-  .mtbLaunchConfigs/Car_subsystem Attach (KitProg3_MiniProg4).launch \
-  .mtbLaunchConfigs/Car_subsystem Debug (KitProg3_MiniProg4).launch \
-  .mtbLaunchConfigs/Car_subsystem Erase (KitProg3_MiniProg4).launch \
-  .mtbLaunchConfigs/Car_subsystem Program (KitProg3_MiniProg4).launch \
+  .mtbLaunchConfigs/Car Attach (KitProg3_MiniProg4).launch \
+  .mtbLaunchConfigs/Car Debug (KitProg3_MiniProg4).launch \
+  .mtbLaunchConfigs/Car Erase (KitProg3_MiniProg4).launch \
+  .mtbLaunchConfigs/Car Program (KitProg3_MiniProg4).launch \
   .settings/language.settings.xml \
   .settings/modustoolbox.prefs \
   .settings/org.eclipse.core.resources.prefs \

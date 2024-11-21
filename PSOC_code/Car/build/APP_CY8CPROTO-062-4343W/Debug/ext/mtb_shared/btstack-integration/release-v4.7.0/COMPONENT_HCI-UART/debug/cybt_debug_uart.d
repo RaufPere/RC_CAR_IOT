@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/btstack-integration/release-v4.7.0/COMPONENT_HCI-UART/debug/cybt_debug_uart.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/btstack-integration/release-v4.7.0/COMPONENT_HCI-UART/debug/cybt_debug_uart.o: \
  c:\users\raufp\mtw\mtb_shared\btstack-integration\release-v4.7.0\component_hci-uart\debug\cybt_debug_uart.c \
  ../mtb_shared/btstack-integration/release-v4.7.0/COMPONENT_HCI-UART/include/cybt_platform_config.h \
  ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal_gpio.h \

@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/wifi-host-driver/release-v4.2.0/WHD/COMPONENT_WIFI5/src/bus_protocols/whd_bus_common.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/wifi-host-driver/release-v4.2.0/WHD/COMPONENT_WIFI5/src/bus_protocols/whd_bus_common.o: \
  c:\users\raufp\mtw\mtb_shared\wifi-host-driver\release-v4.2.0\whd\component_wifi5\src\bus_protocols\whd_bus_common.c \
  ../mtb_shared/abstraction-rtos/release-v1.8.2/include/cyabs_rtos.h \
  ../mtb_shared/abstraction-rtos/release-v1.8.2/include/COMPONENT_FREERTOS/cyabs_rtos_impl.h \

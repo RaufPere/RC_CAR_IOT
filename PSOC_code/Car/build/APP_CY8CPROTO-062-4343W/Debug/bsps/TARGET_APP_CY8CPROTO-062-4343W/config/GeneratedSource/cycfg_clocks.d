@@ -1,7 +1,7 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_clocks.o: \
- C:/Users/raufp/mtw/Car_subsystem/bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_clocks.c \
- C:/Users/raufp/mtw/Car_subsystem/bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_clocks.h \
- C:/Users/raufp/mtw/Car_subsystem/bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_notices.h \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_clocks.o: \
+ C:/Users/raufp/mtw/Car/bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_clocks.c \
+ C:/Users/raufp/mtw/Car/bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_clocks.h \
+ C:/Users/raufp/mtw/Car/bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_notices.h \
  ../mtb_shared/mtb-pdl-cat1/release-v3.12.1/drivers/include/cy_sysclk.h \
  ../mtb_shared/mtb-pdl-cat1/release-v3.12.1/devices/COMPONENT_CAT1A/include/cy_device.h \
  ../mtb_shared/mtb-pdl-cat1/release-v3.12.1/devices/COMPONENT_CAT1A/include/cy_device_headers.h \
@@ -182,8 +182,8 @@ C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/bsps/TARGET
  ../mtb_shared/mtb-hal-cat1/release-v2.6.1/COMPONENT_CAT1A/include/pin_packages/cyhal_psoc6_02_124_bga.h \
  ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include_pvt/cyhal_triggers.h \
  ../mtb_shared/mtb-hal-cat1/release-v2.6.1/COMPONENT_CAT1A/include/triggers/cyhal_triggers_psoc6_02.h
-C:/Users/raufp/mtw/Car_subsystem/bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_clocks.h:
-C:/Users/raufp/mtw/Car_subsystem/bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_notices.h:
+C:/Users/raufp/mtw/Car/bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_clocks.h:
+C:/Users/raufp/mtw/Car/bsps/TARGET_APP_CY8CPROTO-062-4343W/config/GeneratedSource/cycfg_notices.h:
 ../mtb_shared/mtb-pdl-cat1/release-v3.12.1/drivers/include/cy_sysclk.h:
 ../mtb_shared/mtb-pdl-cat1/release-v3.12.1/devices/COMPONENT_CAT1A/include/cy_device.h:
 ../mtb_shared/mtb-pdl-cat1/release-v3.12.1/devices/COMPONENT_CAT1A/include/cy_device_headers.h:

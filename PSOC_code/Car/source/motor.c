@@ -15,19 +15,19 @@ cyhal_pwm_t pwm_obj_motorB2; // Defined here
 void initMotorGPIO()
 {
 	cyhal_pwm_init(&pwm_obj_motorA1, motorPinA1, NULL);
-		cyhal_pwm_init(&pwm_obj_motorB1, motorPinB1, NULL);
-		cyhal_pwm_init(&pwm_obj_motorA2, motorPinA2, NULL);
-		cyhal_pwm_init(&pwm_obj_motorB2, motorPinB2, NULL);
+	cyhal_pwm_init(&pwm_obj_motorB1, motorPinB1, NULL);
+	cyhal_pwm_init(&pwm_obj_motorA2, motorPinA2, NULL);
+	cyhal_pwm_init(&pwm_obj_motorB2, motorPinB2, NULL);
 
-		cyhal_pwm_set_duty_cycle(&pwm_obj_motorA1, 0, PWM_FREQUENCY);
-		cyhal_pwm_set_duty_cycle(&pwm_obj_motorB1, 0, PWM_FREQUENCY);
-		cyhal_pwm_set_duty_cycle(&pwm_obj_motorA2, 0, PWM_FREQUENCY);
-		cyhal_pwm_set_duty_cycle(&pwm_obj_motorB2, 0, PWM_FREQUENCY);
+	cyhal_pwm_set_duty_cycle(&pwm_obj_motorA1, 0, PWM_FREQUENCY);
+	cyhal_pwm_set_duty_cycle(&pwm_obj_motorB1, 0, PWM_FREQUENCY);
+	cyhal_pwm_set_duty_cycle(&pwm_obj_motorA2, 0, PWM_FREQUENCY);
+	cyhal_pwm_set_duty_cycle(&pwm_obj_motorB2, 0, PWM_FREQUENCY);
 
-		cyhal_pwm_start(&pwm_obj_motorA1);
-		cyhal_pwm_start(&pwm_obj_motorB1);
-		cyhal_pwm_start(&pwm_obj_motorA2);
-		cyhal_pwm_start(&pwm_obj_motorB2);
+	cyhal_pwm_start(&pwm_obj_motorA1);
+	cyhal_pwm_start(&pwm_obj_motorB1);
+	cyhal_pwm_start(&pwm_obj_motorA2);
+	cyhal_pwm_start(&pwm_obj_motorB2);
 }
 
 // Function takes the two 8 bit inputs from the joystick. Forward makes the wheels go forward when between
@@ -60,7 +60,7 @@ void motorDriverFunction(uint8_t forward, uint8_t rotation)
 		cyhal_pwm_set_duty_cycle(&pwm_obj_motorB1, 30, PWM_FREQUENCY);
 	}
 	// Drive forward
-	else if (forward >= 127 && (rotation < 240 && rotation > 15))
+	else if (forward >= 185 && (rotation < 240 && rotation > 15))
 	{
 		dutycycle = (forward - 127) * 100 / (255 - 127); // maps value from 127 to 255 to a value from 0 to 100
 		printf("Dutycycle forward: %d\n\r", dutycycle);
@@ -74,7 +74,7 @@ void motorDriverFunction(uint8_t forward, uint8_t rotation)
 		cyhal_pwm_set_duty_cycle(&pwm_obj_motorB1, dutycycle, PWM_FREQUENCY);
 	}
 	// Drive backwards
-	else if (forward <= 126 && (rotation < 240 && rotation > 15))
+	else if (forward <= 180 && (rotation < 240 && rotation > 15))
 	{
 		dutycycle = (126 - forward) * 100 / 126;; // inversly maps value from 0 to 126 to a value from 0 to 100
 		printf("Dutycycle backwards: %d\n\r", dutycycle);
@@ -86,6 +86,15 @@ void motorDriverFunction(uint8_t forward, uint8_t rotation)
 		// Set pwm on correct h bridge pair to get movement
 		cyhal_pwm_set_duty_cycle(&pwm_obj_motorA2, dutycycle, PWM_FREQUENCY);
 		cyhal_pwm_set_duty_cycle(&pwm_obj_motorB2, dutycycle, PWM_FREQUENCY);
+	}
+	// if none stop
+	else
+	{
+		// Turn off
+		cyhal_pwm_set_duty_cycle(&pwm_obj_motorA1, 0, PWM_FREQUENCY);
+		cyhal_pwm_set_duty_cycle(&pwm_obj_motorB1, 0, PWM_FREQUENCY);
+		cyhal_pwm_set_duty_cycle(&pwm_obj_motorA2, 0, PWM_FREQUENCY);
+		cyhal_pwm_set_duty_cycle(&pwm_obj_motorB2, 0, PWM_FREQUENCY);
 	}
 }
 

@@ -1,4 +1,4 @@
-C:/Users/raufp/mtw/Car_subsystem/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/aws-iot-device-sdk-port/release-v2.5.0/source/ota/cy_aws_ota_storage.o: \
+C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/ext/mtb_shared/aws-iot-device-sdk-port/release-v2.5.0/source/ota/cy_aws_ota_storage.o: \
  c:\users\raufp\mtw\mtb_shared\aws-iot-device-sdk-port\release-v2.5.0\source\ota\cy_aws_ota_storage.c \
  ../mtb_shared/aws-iot-device-sdk-port/release-v2.5.0/include/cy_ota_storage.h \
  ../mtb_shared/aws-iot-device-sdk-port/release-v2.5.0/include/cy_aws_iot_port_error.h \
