@@ -1,0 +1,4 @@
+HOSTNAME=Rauf
+PID=3080
+PIPE=\\.\PIPE\aa9e4df4-7190-4492-aa4d-952380ce5d18
+LIBRARIES=C:/Users/raufp/mtw/mtb_shared/mtb-pdl-cat1/release-v3.12.1/props.json;C:/Users/raufp/.modustoolbox/global/device-db/release-v4.18.0/props.json
