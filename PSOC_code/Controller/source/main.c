@@ -109,7 +109,7 @@ void JoyStickTask(void * parameters)
 
 		xQueueOverwrite(JoystickDataQueue, &data);
 
-		vTaskDelay(pdMS_TO_TICKS(1000));
+		vTaskDelay(pdMS_TO_TICKS(10));
 	}
 }
 
@@ -234,12 +234,12 @@ int main()
 	}
 
 	/* Create Button Task for processing button presses */
-	rtos_result = xTaskCreate(DriveSevenSegments, "7segment", configMINIMAL_STACK_SIZE, NULL, BUTTON_TASK_PRIORITY, &sevenSegmentHandle);
+	/*rtos_result = xTaskCreate(DriveSevenSegments, "7segment", configMINIMAL_STACK_SIZE, NULL, BUTTON_TASK_PRIORITY, &sevenSegmentHandle);
 	if( pdPASS != rtos_result)
 	{
 		printf("Failed to create sevensegment task! \n");
 		CY_ASSERT(0);
-	}
+	}*/
 
     /* Start the FreeRTOS scheduler */
     vTaskStartScheduler();
