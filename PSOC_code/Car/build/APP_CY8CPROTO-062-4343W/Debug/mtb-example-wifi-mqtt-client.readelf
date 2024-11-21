@@ -19,8 +19,8 @@ Section Headers:
   [14] .comment          PROGBITS        00000000 113f0e 000033 01  MS  0   0  1
   [15] .debug_line       PROGBITS        00000000 113f41 0fb40e 00      0   0  1
   [16] .debug_line_str   PROGBITS        00000000 20f34f 0000f5 01  MS  0   0  1
-  [17] .debug_info       PROGBITS        00000000 20f444 253bc0 00      0   0  1
-  [18] .debug_abbrev     PROGBITS        00000000 463004 030f6a 00      0   0  1
+  [17] .debug_info       PROGBITS        00000000 20f444 253bc1 00      0   0  1
+  [18] .debug_abbrev     PROGBITS        00000000 463005 030f6a 00      0   0  1
   [19] .debug_aranges    PROGBITS        00000000 493f70 009ef0 00      0   0  8
   [20] .debug_str        PROGBITS        00000000 49de60 061602 01  MS  0   0  1
   [21] .debug_loclists   PROGBITS        00000000 4ff462 0b9996 00      0   0  1

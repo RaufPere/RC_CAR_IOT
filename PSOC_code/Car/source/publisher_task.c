@@ -67,7 +67,7 @@
 #define TIMER_INT_PRIORITY       (3u)
 #define TIMER_TARGET_FREQUENCY   (10000u)
 #define TIMER_COUNT_PERIOD       (999u)
-#define MQTT_PAYLOAD_SIZE (145u)
+#define MQTT_PAYLOAD_SIZE (256u)
 /* Interrupt priority for User Button Input. */
 
 
