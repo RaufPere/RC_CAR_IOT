@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 import paho.mqtt.client as mqtt
 import threading
 from flask_socketio import SocketIO, emit
@@ -8,7 +8,7 @@ import logging
 
 # Flask app initialization
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")  # Enable CORS for WebSocket
 
 # MQTT configuration
 MQTT_BROKER = '1f921750cd3c40f8a5b596c38018d775.s1.eu.hivemq.cloud'
@@ -18,19 +18,24 @@ MQTT_QOS = 0
 MQTT_USERNAME = 'hivemq.webclient.1732014074548'  # Replace with your actual username
 MQTT_PASSWORD = 'GA9EB182CwsHfevb:,<;'  # Replace with your actual password
 
+# Path to certificate files
+CLIENT_CERT = 'client.crt'
+CLIENT_KEY = 'client.key'
+CA_CERT = 'isrgrootx1.pem'
+
 # Variables to hold the latest received data and previous timestamp
 mqtt_message = ""
 previous_time = None
 velocity_x = velocity_y = velocity_z = 0  # Initial velocity components in m/s
 
+
 # Callback function when a message is received from MQTT broker
 def on_message(client, userdata, message):
     global mqtt_message, previous_time, velocity_x, velocity_y, velocity_z
-    
-    # Decode message payload
+
     mqtt_message = message.payload.decode('utf-8')
-    
-    # Check if mqtt_message is not empty and valid JSON
+    print(f"Received MQTT Message: {mqtt_message}")
+
     if mqtt_message:
         try:
             # Parse JSON string to dictionary
@@ -38,11 +43,13 @@ def on_message(client, userdata, message):
             
             # Get current time and calculate the time difference (delta_t)
             current_time = time.time()
-            if previous_time is not None:
-                delta_t = current_time - previous_time
-            else:
-                delta_t = 0  # First message, no time difference
+            delta_t = current_time - previous_time if previous_time else 0
             previous_time = current_time
+
+            # Prevent velocity drift due to unusually large delta_t values
+            if delta_t > 1:
+                print(f"Warning: Unusually large delta_t ({delta_t:.2f}s). Skipping velocity update.")
+                return
 
             # Extract acceleration values (assume values are in m/s²)
             accel_x = data.get("accel_x", 0.0)
@@ -60,31 +67,44 @@ def on_message(client, userdata, message):
             # Add speed to the data dictionary
             data["speed"] = round(speed, 2)
 
-            # Emit the updated data as JSON string
+            # Emit the updated data to the frontend
             socketio.emit('mqtt_message', {'message': json.dumps(data)})
-        except json.JSONDecodeError:
-            pass
+        except json.JSONDecodeError as e:
+            print(f"Error: Invalid JSON received: {mqtt_message}. Error: {e}")
     else:
         print("Received an empty message. Skipping this message.")
 
-# Setup MQTT client
+
+# MQTT setup function
 def mqtt_setup():
     client = mqtt.Client()
     client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)  # Set the credentials
-    # Set TLS configuration
-    client.tls_set(
-        ca_certs="isrgrootx1.pem",  # Path to the HiveMQ root CA certificate
-        certfile=None,
-        keyfile=None
-    )
-    import logging
-    logging.basicConfig(level=logging.DEBUG)
-    client.enable_logger()
-    client.tls_insecure_set(False)  # Enforce server certificate validation
-    client.on_message = on_message
-    client.connect(MQTT_BROKER, MQTT_PORT)
-    client.subscribe(MQTT_TOPIC, qos=MQTT_QOS)
-   
+
+    try:
+        # Configure TLS/SSL with certificates
+        client.tls_set(
+            ca_certs=CA_CERT,       # Path to CA certificate
+            certfile=CLIENT_CERT,   # Path to client certificate
+            keyfile=CLIENT_KEY      # Path to client private key
+        )
+        client.tls_insecure_set(False)  # Enforce server certificate validation
+
+        # Enable logging for debugging
+        logging.basicConfig(level=logging.DEBUG)
+        client.enable_logger()
+
+        client.on_message = on_message
+
+        # Connect to MQTT broker
+        client.connect(MQTT_BROKER, MQTT_PORT)
+        client.subscribe(MQTT_TOPIC, qos=MQTT_QOS)
+        print(f"Subscribed to MQTT topic '{MQTT_TOPIC}' at {MQTT_BROKER}:{MQTT_PORT}")
+
+        # Start the MQTT loop
+        client.loop_forever()
+    except Exception as e:
+        print(f"Error: Failed to connect to MQTT broker. {e}")
+
 
 # Start MQTT listener in a separate thread
 def start_mqtt_thread():
@@ -92,10 +112,27 @@ def start_mqtt_thread():
     mqtt_thread.daemon = True
     mqtt_thread.start()
 
-# Route to display the message on HTML page
+
+# Flask route to display the latest MQTT message
+@app.route('/latest-message')
+def latest_message():
+    global mqtt_message
+    if mqtt_message:
+        return jsonify({"latest_message": mqtt_message})
+    return jsonify({"message": "No messages received yet."}), 404
+
+
+# Route to display the frontend
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@socketio.on('test_connection')
+def handle_test_connection(data):
+    print("Test connection received:", data)
+    emit('test_response', {'message': 'Connection successful'})
+
 
 # Start the MQTT listener when the Flask app starts
 if __name__ == '__main__':

@@ -128,6 +128,15 @@
     <script>
         var socket = io.connect('http://' + document.domain + ':' + location.port);
 
+        socket.emit('test_connection', { message: 'Test message from frontend' });
+
+        socket.on('test_response', function(data) {
+            console.log(data.message); // Should log "Connection successful"
+        });
+
+
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
         socket.on('mqtt_message', function(data) {
             // Parse the JSON data received from the server
             let messageData = JSON.parse(data.message);
