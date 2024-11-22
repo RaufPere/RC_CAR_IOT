@@ -57,6 +57,7 @@
 /* Middleware libraries */
 #include "cy_mqtt_api.h"
 #include "cy_retarget_io.h"
+#include "MPU6050.h"
 
 /******************************************************************************
 * Macros
@@ -88,6 +89,7 @@ QueueHandle_t subscriber_task_q;
  * the publisher task.
  */
 
+const char* gyro_topic = "GYROrst";
 
 /* Configure the subscription information structure. */
 const cy_mqtt_subscribe_info_t subscribe_info_reset_gyro =
@@ -241,7 +243,6 @@ static void subscribe_to_topic(void)
  ******************************************************************************/
 void mqtt_subscription_callback(cy_mqtt_publish_info_t *received_msg_info)
 {
-	printf("AAAAAAAAAAAAA");
     /* Received MQTT message */
     const char *received_msg = received_msg_info->payload;
     int received_msg_len = received_msg_info->payload_len;
@@ -257,6 +258,20 @@ void mqtt_subscription_callback(cy_mqtt_publish_info_t *received_msg_info)
            received_msg_info->topic_len, received_msg_info->topic,
            (int) received_msg_info->qos,
            (int) received_msg_info->payload_len, (const char *)received_msg_info->payload);
+
+    if (!strcmp(received_msg_info->topic, "MOTOR"))
+    {
+
+    }
+    if (!strcmp(received_msg_info->topic[0], 'G'))
+    {
+    	if(!strcmp(received_msg_info->payload, "{\"reset_orientation\": true}elt"))
+    	{
+    		gyro_x_abs = 0.0;
+    		gyro_y_abs = 0.0;
+    		gyro_z_abs = 0.0;
+    	}
+    }
 
     /* Assign the command to be sent to the subscriber task. */
     subscriber_q_data.cmd = UPDATE_DEVICE_STATE;
