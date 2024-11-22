@@ -193,7 +193,8 @@ void publisher_task(void *pvParameters)
                 	               // Read temperature registers
                 	               MPU6050_i2c_tempRead(&publisher_q_data.temperature);
                 	               // Read gyroscope registers
-                	               MPU6050_i2c_gyroscoop(&publisher_q_data.gyro_x, &publisher_q_data.gyro_y, &publisher_q_data.gyro_z);
+                	               MPU6050_i2c_gyroscoop(&publisher_q_data.gyro_x, &publisher_q_data.gyro_y, &publisher_q_data.gyro_z
+                	            		   ,&publisher_q_data.gyro_x_abs ,&publisher_q_data.gyro_y_abs, &publisher_q_data.gyro_z_abs);
                 	                /* Publish the data received over the message queue. */
                 	               char payload_buffer[MQTT_PAYLOAD_SIZE];  // Allocate enough space for the formatted string
 
@@ -201,12 +202,13 @@ void publisher_task(void *pvParameters)
                 	               snprintf(payload_buffer, sizeof(payload_buffer),
                 	                        "{"
                 	                        "\"accel_x\": %.2f, \"accel_y\": %.2f, \"accel_z\": %.2f, \"magnitude\": %.2f, "
-                	                        "\"gyro_x\": %.2f, \"gyro_y\": %.2f, \"gyro_z\": %.2f, "
+                	                        "\"gyro_x\": %.2f, \"gyro_y\": %.2f, \"gyro_z\": %.2f, \"gyro_x_abs\": %.2f, \"gyro_y_abs\": %.2f, \"gyro_z_abs\": %.2f, "
                 	                        "\"temperature\": %.2f"
                 	                        "}",
                 	                        publisher_q_data.accel_x, publisher_q_data.accel_y, publisher_q_data.accel_z,
                 	                        publisher_q_data.magnitude,
                 	                        publisher_q_data.gyro_x, publisher_q_data.gyro_y, publisher_q_data.gyro_z,
+											publisher_q_data.gyro_x_abs ,publisher_q_data.gyro_y_abs, publisher_q_data.gyro_z_abs,
                 	                        publisher_q_data.temperature);
                 	               publish_info.payload = payload_buffer;
                 	                publish_info.payload_len = strlen(publish_info.payload);

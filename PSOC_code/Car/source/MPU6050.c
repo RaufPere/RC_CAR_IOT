@@ -11,6 +11,10 @@ char buffer[BUFFER_SIZE];
 cy_stc_scb_i2c_master_xfer_config_t transfer;
 cy_stc_scb_i2c_context_t I2CBUS_context;
 
+// Absolute gyroscope values
+float gyro_x_abs = 0;
+float gyro_y_abs = 0;
+float gyro_z_abs = 0;
 
 void I2C_PDL_Setup(){
 	 /* Set up the device based on configurator selections */
@@ -219,7 +223,7 @@ bool MPU6050_i2c_accelerometer(float* accel_x, float* accel_y, float* accel_z, f
 	return handle_i2c(&status_i2c);
 }
 
-bool MPU6050_i2c_gyroscoop(float* gyroXdps, float* gyroYdps, float* gyroZdps){
+bool MPU6050_i2c_gyroscoop(float* gyroXdps, float* gyroYdps, float* gyroZdps, float* gyroXdpsABS, float* gyroYdpsABS, float* gyroZdpsABS){
 	// One axis has 2 internal registers. 6x burst read for x, y and z plane.
 	cy_en_scb_i2c_status_t status_i2c;
 	uint8_t readBuffer[6UL];
@@ -232,6 +236,29 @@ bool MPU6050_i2c_gyroscoop(float* gyroXdps, float* gyroYdps, float* gyroZdps){
 	*(gyroYdps) = rawY / SENSITIVITYSCALE_GYRO;
 	*(gyroZdps) = rawZ / SENSITIVITYSCALE_GYRO;
 	//printf("\n\rGYRO X-AXIS : %.2f\n\rGYRO Y-AXIS : %.2f\n\rGYRO Z-AXIS : %.2f \n\r", gyroXdps, gyroYdps, gyroZdps);
+
+	//Update absolute values from raw read in.
+	if (*gyroXdps < 5 && *gyroXdps > -5)
+	{
+		*gyroXdps = 0;
+	}
+	if (*gyroYdps < 5 && *gyroYdps > -5)
+	{
+		*gyroYdps = 0;
+	}
+	if (*gyroZdps < 5 && *gyroZdps > -5)
+	{
+		*gyroZdps = 0;
+	}
+
+	gyro_x_abs += *gyroXdps;
+	gyro_y_abs += *gyroYdps;
+	gyro_z_abs += *gyroZdps;
+
+	*(gyroXdpsABS) = gyro_x_abs;
+	*(gyroYdpsABS) = gyro_y_abs;
+	*(gyroZdpsABS) = gyro_z_abs;
+
 	return handle_i2c(&status_i2c);
 }
 

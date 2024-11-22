@@ -66,6 +66,11 @@ void MPU6050_i2c_identify();
 void MPU6050_i2c_tempRead(float* temp);
 bool MPU6050_i2c_config();
 bool MPU6050_i2c_accelerometer(float* accel_x, float* accel_y, float* accel_z, float* magnitude);
-bool MPU6050_i2c_gyroscoop(float* gyroXdps, float* gyroYdps, float* gyroZdps);
+bool MPU6050_i2c_gyroscoop(float* gyroXdps, float* gyroYdps, float* gyroZdps, float* gyroXdpsABS, float* gyroYdpsABS, float* gyroZdpsABS);
+
+// Absolute gyroscope values
+extern float gyro_x_abs;
+extern float gyro_y_abs;
+extern float gyro_z_abs;
 
 #endif /* MPU6050_H_ */

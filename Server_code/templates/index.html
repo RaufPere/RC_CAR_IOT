@@ -122,9 +122,9 @@
             let messageData = JSON.parse(data.message);
 
             // Extract gyroscope data
-            const gyroX = messageData.gyro_x;
-            const gyroY = messageData.gyro_y;
-            const gyroZ = messageData.gyro_z;
+            const gyroX = messageData.gyro_x_abs;
+            const gyroY = messageData.gyro_y_abs;
+            const gyroZ = messageData.gyro_z_abs;
 
             // Rotate the cube based on gyroscope data
             document.querySelector('.cube').style.transform = `rotateX(${gyroX}deg) rotateY(${gyroY}deg) rotateZ(${gyroZ}deg)`;

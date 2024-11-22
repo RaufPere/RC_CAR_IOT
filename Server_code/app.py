@@ -26,10 +26,9 @@ CA_CERT = 'isrgrootx1.pem'
 # Variables to hold the latest received data and previous timestamp
 mqtt_message = ""
 
-
 # Callback function when a message is received from MQTT broker
 def on_message(client, userdata, message):
-    global mqtt_message, previous_time, velocity_x, velocity_y, velocity_z
+    global mqtt_message
 
     mqtt_message = message.payload.decode('utf-8')
     print(f"Received MQTT Message: {mqtt_message}")
@@ -45,7 +44,6 @@ def on_message(client, userdata, message):
             print(f"Error: Invalid JSON received: {mqtt_message}. Error: {e}")
     else:
         print("Received an empty message. Skipping this message.")
-
 
 # MQTT setup function
 def mqtt_setup():

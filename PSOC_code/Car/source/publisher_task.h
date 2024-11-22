@@ -74,6 +74,9 @@ typedef struct{
     float gyro_x;
     float gyro_y;
     float gyro_z;
+    float gyro_x_abs;
+    float gyro_y_abs;
+    float gyro_z_abs;
     float temperature;
 } publisher_data_t;
 
