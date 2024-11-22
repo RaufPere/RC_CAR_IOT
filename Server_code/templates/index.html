@@ -83,6 +83,7 @@
             transform-style: preserve-3d;
             transition: transform 0.2s ease;
             box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            rotateY: 180deg;
         }
 
         .face {
@@ -185,11 +186,11 @@
         socket.on('mqtt_message', function(data) {
             let messageData = JSON.parse(data.message);
 
-            const gyroX = messageData.gyro_x_abs;
-            const gyroY = messageData.gyro_y_abs;
-            const gyroZ = messageData.gyro_z_abs;
-
-            document.querySelector('.cube').style.transform = `rotateX(${gyroX}deg) rotateY(${gyroY}deg) rotateZ(${gyroZ}deg)`;
+            const gyroX = -messageData.gyro_x_abs/5;
+            const gyroY = -messageData.gyro_y_abs/5;
+            const gyroZ = messageData.gyro_z_abs/5;
+            
+            document.querySelector('.cube').style.transform = `rotateX(${gyroY}deg) rotateY(${gyroZ}deg) rotateZ(${gyroX}deg)`;
 
             var table = document.getElementById('mqttTable');
             table.innerHTML = '';
