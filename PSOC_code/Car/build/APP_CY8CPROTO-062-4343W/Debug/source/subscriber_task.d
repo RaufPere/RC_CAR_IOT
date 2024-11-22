@@ -286,7 +286,8 @@ C:/Users/raufp/mtw/Car/build/APP_CY8CPROTO-062-4343W/Debug/source/subscriber_tas
  ../mtb_shared/secure-sockets/release-v3.8.0/include/cy_tls.h \
  C:/Users/raufp/mtw/Car/source/mqtt_task.h configs/mqtt_client_config.h \
  ../mtb_shared/retarget-io/release-v1.6.0/include/cy_retarget_io.h \
- C:/Users/raufp/mtw/Car/source/MPU6050.h
+ C:/Users/raufp/mtw/Car/source/MPU6050.h \
+ C:/Users/raufp/mtw/Car/source/motor.h
 ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal.h:
 ../mtb_shared/mtb-hal-cat1/release-v2.6.1/include/cyhal_general_types.h:
 ../mtb_shared/core-lib/release-v1.4.2/include/cy_result.h:
@@ -575,3 +576,4 @@ C:/Users/raufp/mtw/Car/source/mqtt_task.h:
 configs/mqtt_client_config.h:
 ../mtb_shared/retarget-io/release-v1.6.0/include/cy_retarget_io.h:
 C:/Users/raufp/mtw/Car/source/MPU6050.h:
+C:/Users/raufp/mtw/Car/source/motor.h:

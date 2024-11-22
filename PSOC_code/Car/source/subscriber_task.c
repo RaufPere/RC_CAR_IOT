@@ -58,7 +58,7 @@
 #include "cy_mqtt_api.h"
 #include "cy_retarget_io.h"
 #include "MPU6050.h"
-
+#include "motor.h"
 /******************************************************************************
 * Macros
 ******************************************************************************/
@@ -259,14 +259,24 @@ void mqtt_subscription_callback(cy_mqtt_publish_info_t *received_msg_info)
            (int) received_msg_info->qos,
            (int) received_msg_info->payload_len, (const char *)received_msg_info->payload);
 
-    if (!strcmp(received_msg_info->topic, "MOTOR"))
+    if (received_msg_info->topic[0] == 'M')
     {
-
-    }
-    if (!strcmp(received_msg_info->topic[0], 'G'))
-    {
-    	if(!strcmp(received_msg_info->payload, "{\"reset_orientation\": true}elt"))
+    	if(strstr(received_msg_info->payload, "false") != NULL)
+		{
+    		printf("Motors disabled\n");
+			enableMotors = 0;
+		}
+    	else
     	{
+    		printf("Motors enabled\n");
+    		enableMotors = 1;
+    	}
+    }
+    if (received_msg_info->topic[0] == 'G')
+    {
+    	if(!strstr(received_msg_info->payload, "false") != NULL)
+    	{
+    		printf("Orientation reset!\n");
     		gyro_x_abs = 0.0;
     		gyro_y_abs = 0.0;
     		gyro_z_abs = 0.0;

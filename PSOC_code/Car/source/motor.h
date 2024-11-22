@@ -43,4 +43,6 @@ void initMotorGPIO();
 void motorDriverFunction(uint8_t forward, uint8_t rotation);
 void motor_driver_task(void *pvParameters);
 
+extern bool enableMotors;
+
 #endif /* SOURCE_MOTOR_H_ */
