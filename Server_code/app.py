@@ -25,8 +25,6 @@ CA_CERT = 'isrgrootx1.pem'
 
 # Variables to hold the latest received data and previous timestamp
 mqtt_message = ""
-previous_time = None
-velocity_x = velocity_y = velocity_z = 0  # Initial velocity components in m/s
 
 
 # Callback function when a message is received from MQTT broker
@@ -41,32 +39,6 @@ def on_message(client, userdata, message):
             # Parse JSON string to dictionary
             data = json.loads(mqtt_message)
             
-            # Get current time and calculate the time difference (delta_t)
-            current_time = time.time()
-            delta_t = current_time - previous_time if previous_time else 0
-            previous_time = current_time
-
-            # Prevent velocity drift due to unusually large delta_t values
-            if delta_t > 1:
-                print(f"Warning: Unusually large delta_t ({delta_t:.2f}s). Skipping velocity update.")
-                return
-
-            # Extract acceleration values (assume values are in m/s²)
-            accel_x = data.get("accel_x", 0.0)
-            accel_y = data.get("accel_y", 0.0)
-            accel_z = data.get("accel_z", 0.0)
-
-            # Update velocity using v = u + at (integrating acceleration over time)
-            velocity_x += accel_x * delta_t
-            velocity_y += accel_y * delta_t
-            velocity_z += accel_z * delta_t
-
-            # Calculate the magnitude of the velocity (speed)
-            speed = (velocity_x**2 + velocity_y**2 + velocity_z**2)**0.5
-
-            # Add speed to the data dictionary
-            data["speed"] = round(speed, 2)
-
             # Emit the updated data to the frontend
             socketio.emit('mqtt_message', {'message': json.dumps(data)})
         except json.JSONDecodeError as e:
