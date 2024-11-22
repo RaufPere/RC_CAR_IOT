@@ -44,20 +44,20 @@ TaskHandle_t sevenSegmentHandle;
 
 QueueHandle_t JoystickDataQueue;
 
-void DriveSevenSegments()
+void DriveSevenSegments(void * parameters)
 {
 	// Array for segments (A-G) for each digit (0-9)
 	const uint8_t digits[10] = {
-	    0b00111111, // 0
-	    0b00000110, // 1
-	    0b01011011, // 2
-	    0b01001111, // 3
-	    0b01100110, // 4
-	    0b01101101, // 5
-	    0b01111101, // 6
-	    0b00000111, // 7
-	    0b01111111, // 8
-	    0b01101111  // 9
+		0b00111111, // 0
+		0b00000110, // 1
+		0b01011011, // 2
+		0b01001111, // 3
+		0b01100110, // 4
+		0b01101101, // 5
+		0b01111101, // 6
+		0b00000111, // 7
+		0b01111111, // 8
+		0b01101111  // 9
 	};
 
 	int speed = 0;
@@ -234,12 +234,12 @@ int main()
 	}
 
 	/* Create Button Task for processing button presses */
-	/*rtos_result = xTaskCreate(DriveSevenSegments, "7segment", configMINIMAL_STACK_SIZE, NULL, BUTTON_TASK_PRIORITY, &sevenSegmentHandle);
+	rtos_result = xTaskCreate(DriveSevenSegments, "7segment", configMINIMAL_STACK_SIZE, NULL, 7-2, &sevenSegmentHandle);
 	if( pdPASS != rtos_result)
 	{
 		printf("Failed to create sevensegment task! \n");
 		CY_ASSERT(0);
-	}*/
+	}
 
     /* Start the FreeRTOS scheduler */
     vTaskStartScheduler();
