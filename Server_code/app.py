@@ -38,7 +38,7 @@ def on_message(client, userdata, message):
         try:
             # Parse JSON string to dictionary
             data = json.loads(mqtt_message)
-            
+
             # Emit the updated data to the frontend
             socketio.emit('mqtt_message', {'message': json.dumps(data)})
         except json.JSONDecodeError as e:

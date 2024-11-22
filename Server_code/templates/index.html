@@ -33,21 +33,9 @@
             margin-top: 30px;
         }
 
-        pre {
-            background-color: #eaeaea;
-            padding: 15px;
-            border-radius: 5px;
-            width: 80%;
-            max-width: 800px;
-            text-align: left;
-            margin: 20px auto;
-            overflow-x: auto;
-        }
-
         table {
-            width: 80%;
-            max-width: 800px;
-            margin: 20px auto;
+            width: 45%;
+            margin: 20px;
             border-collapse: collapse;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
@@ -85,6 +73,7 @@
             justify-content: center;
             margin-top: 50px;
             margin-bottom: 50px;
+            width: 45%;
         }
 
         .cube {
@@ -118,12 +107,6 @@
         .right  { transform: rotateY(90deg) translateZ(75px); }
         .top    { transform: rotateX(90deg) translateZ(75px); }
         .bottom { transform: rotateX(-90deg) translateZ(75px); }
-
-        /* Cube text styling */
-        .cube .face {
-            font-size: 14px;
-            text-align: center;
-        }
     </style>
     <script>
         var socket = io.connect('http://' + document.domain + ':' + location.port);
@@ -133,9 +116,6 @@
         socket.on('test_response', function(data) {
             console.log(data.message); // Should log "Connection successful"
         });
-
-
-        var socket = io.connect('http://' + document.domain + ':' + location.port);
 
         socket.on('mqtt_message', function(data) {
             // Parse the JSON data received from the server
@@ -148,9 +128,6 @@
 
             // Rotate the cube based on gyroscope data
             document.querySelector('.cube').style.transform = `rotateX(${gyroX}deg) rotateY(${gyroY}deg) rotateZ(${gyroZ}deg)`;
-
-            // Display raw JSON string
-            document.getElementById('mqttMessage').innerText = JSON.stringify(messageData, null, 2);
 
             // Display JSON data in a table
             var table = document.getElementById('mqttTable');
@@ -169,25 +146,32 @@
 </head>
 <body>
     <h1>Latest MQTT Message</h1>
-    <h2>Raw JSON String</h2>
-    <pre id="mqttMessage">Waiting for message...</pre>
-    <h2>JSON Data in Table</h2>
-    <table id="mqttTable" border="1">
-        <tr>
-            <th>Key</th>
-            <th>Value</th>
-        </tr>
-    </table>
 
-    <!-- 3D Cube to Display Gyroscope Data -->
-    <div class="cube-container">
-        <div class="cube">
-            <div class="face front">Front</div>
-            <div class="face back">Back</div>
-            <div class="face left">Left</div>
-            <div class="face right">Right</div>
-            <div class="face top">Top</div>
-            <div class="face bottom">Bottom</div>
+    <div style="display: flex; justify-content: space-between; width: 90%; max-width: 1200px;">
+        <!-- Table displaying JSON data -->
+        <div>
+            <h2>MPU6050 Data</h2>
+            <table id="mqttTable" border="1">
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 3D Cube to Display Gyroscope Data -->
+        <div>
+            <h2>Car Orientation</h2>
+            <div class="cube-container">
+                <div class="cube">
+                    <div class="face front">Front</div>
+                    <div class="face back">Back</div>
+                    <div class="face left">Left</div>
+                    <div class="face right">Right</div>
+                    <div class="face top">Top</div>
+                    <div class="face bottom">Bottom</div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
