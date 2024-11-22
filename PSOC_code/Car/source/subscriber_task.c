@@ -68,7 +68,7 @@
 #define MQTT_SUBSCRIBE_RETRY_INTERVAL_MS        (1000)
 
 /* The number of MQTT topics to be subscribed to. */
-#define SUBSCRIPTION_COUNT                      (1)
+#define SUBSCRIPTION_COUNT                      (2)
 
 /* Queue length of a message queue that is used to communicate with the 
  * subscriber task.
@@ -90,20 +90,28 @@ QueueHandle_t subscriber_task_q;
 
 
 /* Configure the subscription information structure. */
-static cy_mqtt_subscribe_info_t subscribe_info =
+const cy_mqtt_subscribe_info_t subscribe_info_reset_gyro =
 {
     .qos = (cy_mqtt_qos_t) MQTT_MESSAGES_QOS,
-    .topic = MQTT_SUB_TOPIC,
-    .topic_len = (sizeof(MQTT_SUB_TOPIC) - 1)
+    .topic = MQTT_SUB_TOPIC_RESET_GYRO,
+    .topic_len = (sizeof(MQTT_SUB_TOPIC_RESET_GYRO) - 1)
 };
+
+/* Configure the subscription information structure. */
+const cy_mqtt_subscribe_info_t subscribe_info_motor =
+{
+    .qos = (cy_mqtt_qos_t) MQTT_MESSAGES_QOS,
+    .topic = MQTT_SUB_TOPIC_MOTOR,
+    .topic_len = (sizeof(MQTT_SUB_TOPIC_MOTOR) - 1)
+};
+
+cy_mqtt_subscribe_info_t topicsArray[SUBSCRIPTION_COUNT] = {subscribe_info_motor, subscribe_info_reset_gyro};
 
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
 static void subscribe_to_topic(void);
 static void unsubscribe_from_topic(void);
-void print_heap_usage(char *msg);
-
 /******************************************************************************
  * Function Name: subscriber_task
  ******************************************************************************
@@ -193,11 +201,10 @@ static void subscribe_to_topic(void)
     /* Subscribe with the configured parameters. */
     for (uint32_t retry_count = 0; retry_count < MAX_SUBSCRIBE_RETRIES; retry_count++)
     {
-        result = cy_mqtt_subscribe(mqtt_connection, &subscribe_info, SUBSCRIPTION_COUNT);
+        result = cy_mqtt_subscribe(mqtt_connection, topicsArray, SUBSCRIPTION_COUNT);
         if (result == CY_RSLT_SUCCESS)
         {
-            printf("\nMQTT client subscribed to the topic '%.*s' successfully.\n", 
-                    subscribe_info.topic_len, subscribe_info.topic);
+            printf("\nMQTT client subscribed to the topics\n");
             break;
         }
 
@@ -234,6 +241,7 @@ static void subscribe_to_topic(void)
  ******************************************************************************/
 void mqtt_subscription_callback(cy_mqtt_publish_info_t *received_msg_info)
 {
+	printf("AAAAAAAAAAAAA");
     /* Received MQTT message */
     const char *received_msg = received_msg_info->payload;
     int received_msg_len = received_msg_info->payload_len;
@@ -252,10 +260,6 @@ void mqtt_subscription_callback(cy_mqtt_publish_info_t *received_msg_info)
 
     /* Assign the command to be sent to the subscriber task. */
     subscriber_q_data.cmd = UPDATE_DEVICE_STATE;
-
-
-
-
 
     /* Send the command and data to subscriber task queue */
     xQueueSend(subscriber_task_q, &subscriber_q_data, portMAX_DELAY);
@@ -278,7 +282,7 @@ void mqtt_subscription_callback(cy_mqtt_publish_info_t *received_msg_info)
 static void unsubscribe_from_topic(void)
 {
     cy_rslt_t result = cy_mqtt_unsubscribe(mqtt_connection, 
-                                           (cy_mqtt_unsubscribe_info_t *) &subscribe_info, 
+                                           (cy_mqtt_unsubscribe_info_t *) &subscribe_info_reset_gyro, 
                                            SUBSCRIPTION_COUNT);
 
     if (result != CY_RSLT_SUCCESS)

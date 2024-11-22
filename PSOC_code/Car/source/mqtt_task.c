@@ -209,7 +209,7 @@ void mqtt_client_task(void *pvParameters)
     {
         goto exit_cleanup;
     }
-/*
+
     // Create the subscriber task and cleanup if the operation fails.
     if (pdPASS != xTaskCreate(subscriber_task, "Subscriber task", SUBSCRIBER_TASK_STACK_SIZE,
                               NULL, SUBSCRIBER_TASK_PRIORITY, &subscriber_task_handle))
@@ -220,7 +220,7 @@ void mqtt_client_task(void *pvParameters)
 
     // Wait for the subscribe operation to complete.
     vTaskDelay(pdMS_TO_TICKS(TASK_CREATION_DELAY_MS));
-*/
+
     /* Create the publisher task and cleanup if the operation fails. */
     if (pdPASS != xTaskCreate(publisher_task, "Publisher task", PUBLISHER_TASK_STACK_SIZE, 
                               NULL, PUBLISHER_TASK_PRIORITY, &publisher_task_handle))

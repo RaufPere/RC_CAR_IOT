@@ -66,7 +66,9 @@
 /********************* MQTT MESSAGE CONFIGURATION MACROS **********************/
 /* The MQTT topics to be used by the publisher and subscriber. */
 #define MQTT_PUB_TOPIC                    "MPU6050"
-#define MQTT_SUB_TOPIC                    "MPU6050"
+#define MQTT_SUB_TOPIC_MPU                "MPU6050"
+#define MQTT_SUB_TOPIC_RESET_GYRO         "GYROrst"
+#define MQTT_SUB_TOPIC_MOTOR        	  "MOTOR"
 
 /* Set the QoS that is associated with the MQTT publish, and subscribe messages.
  * Valid choices are 0, 1, and 2. Other values should not be used in this macro.

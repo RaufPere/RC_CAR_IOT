@@ -107,6 +107,71 @@
         .right  { transform: rotateY(90deg) translateZ(75px); }
         .top    { transform: rotateX(90deg) translateZ(75px); }
         .bottom { transform: rotateX(-90deg) translateZ(75px); }
+
+        /* Button Styles */
+        .button-container {
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 1.1em;
+            color: white;
+            background-color: #005f87;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            border-radius: 50%;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
     </style>
     <script>
         var socket = io.connect('http://' + document.domain + ':' + location.port);
@@ -118,20 +183,16 @@
         });
 
         socket.on('mqtt_message', function(data) {
-            // Parse the JSON data received from the server
             let messageData = JSON.parse(data.message);
 
-            // Extract gyroscope data
             const gyroX = messageData.gyro_x_abs;
             const gyroY = messageData.gyro_y_abs;
             const gyroZ = messageData.gyro_z_abs;
 
-            // Rotate the cube based on gyroscope data
             document.querySelector('.cube').style.transform = `rotateX(${gyroX}deg) rotateY(${gyroY}deg) rotateZ(${gyroZ}deg)`;
 
-            // Display JSON data in a table
             var table = document.getElementById('mqttTable');
-            table.innerHTML = ''; // Clear previous table content
+            table.innerHTML = '';
             for (var key in messageData) {
                 if (messageData.hasOwnProperty(key)) {
                     var row = table.insertRow();
@@ -142,13 +203,21 @@
                 }
             }
         });
+
+        function resetOrientation() {
+            socket.emit('reset_orientation', { state: true });
+        }
+
+        function toggleMotorState() {
+            var motorState = document.getElementById('motorSwitch').checked;
+            socket.emit('toggle_motor_state', { state: motorState });
+        }
     </script>
 </head>
 <body>
     <h1>Latest MQTT Message</h1>
 
     <div style="display: flex; justify-content: space-between; width: 90%; max-width: 1200px;">
-        <!-- Table displaying JSON data -->
         <div>
             <h2>MPU6050 Data</h2>
             <table id="mqttTable" border="1">
@@ -159,7 +228,6 @@
             </table>
         </div>
 
-        <!-- 3D Cube to Display Gyroscope Data -->
         <div>
             <h2>Car Orientation</h2>
             <div class="cube-container">
@@ -173,6 +241,15 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="button-container">
+        <button class="btn" onclick="resetOrientation()">Reset Orientation</button>
+        <label class="switch">
+            <input type="checkbox" id="motorSwitch" onchange="toggleMotorState()">
+            <span class="slider"></span>
+        </label>
+        <span>Disable Motors</span>
     </div>
 </body>
 </html>
