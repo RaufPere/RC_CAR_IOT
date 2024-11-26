@@ -1,6 +1,5 @@
 # RC_CAR_IOT
 
 ## Concept diagram
-
-![image](https://github.com/user-attachments/assets/a45f05cf-edfd-45a2-80be-8ff1f47946cf)
+![image](https://github.com/user-attachments/assets/9a75a690-4e02-40aa-bba9-d1ba4cb16c0d)
 
