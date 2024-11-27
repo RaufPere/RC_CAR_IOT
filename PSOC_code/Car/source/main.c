@@ -49,6 +49,8 @@ int main()
     cy_retarget_io_init(CYBSP_DEBUG_UART_TX, CYBSP_DEBUG_UART_RX,
                         CY_RETARGET_IO_BAUDRATE);
 	
+    printf("\n\n\nRAUF DARREN IOT RC CAR\n\n\n");
+
     cy_rslt_t rslt = cyhal_gpio_init(LED_PIN, CYHAL_GPIO_DIR_OUTPUT, CYHAL_GPIO_DRIVE_STRONG, 1);
 
     rslt = cyhal_gpio_init(METER_PIN, CYHAL_GPIO_DIR_INPUT, CYHAL_GPIO_DRIVE_NONE, false);

@@ -14,10 +14,10 @@
 #include "cybsp.h"
 
 // define motor pins connections
-#define motorPinA1 P9_1
-#define motorPinA2 P9_2
-#define motorPinB1 P9_4
-#define motorPinB2 P9_7
+#define motorPinA1 P6_3
+#define motorPinA2 P8_1
+#define motorPinB1 P8_6
+#define motorPinB2 P8_4
 
 // define pwm frequency motors
 #define PWM_FREQUENCY 10000
