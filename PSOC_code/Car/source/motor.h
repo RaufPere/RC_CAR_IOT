@@ -12,7 +12,6 @@
 #include "queue.h"
 #include "stdio.h"
 #include "cybsp.h"
-#include "cyhal.h"
 
 // define motor pins connections
 #define motorPinA1 P9_1
