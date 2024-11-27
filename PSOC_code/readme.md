@@ -6,7 +6,7 @@ Readme shows hardware connections and how to open the project software correctly
 
 ### Car subsystem hardware connections
 
-![image](https://github.com/user-attachments/assets/2e963cb3-30ff-4c97-9561-505ac472ff98)
+![image](https://github.com/user-attachments/assets/ce5b7b2b-da92-4254-a9d9-de9d55d74974)
 
 ### Controller subsystem hardware connections
 

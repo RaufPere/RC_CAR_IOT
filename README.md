@@ -2,5 +2,5 @@
 
 ## Concept diagram
 
-![image](https://github.com/user-attachments/assets/a45f05cf-edfd-45a2-80be-8ff1f47946cf)
+![image](https://github.com/user-attachments/assets/b6208bf3-c72e-4469-a643-1357bf9f7766)
 
