@@ -17,7 +17,7 @@
 
 #define METER_PIN P10_4 // Digital pin of speed sensor
 #define HOLES 20 // Number of holes in the gear
-#define GEAR_RADIUS 0.01// Radius of gear with holes (1cm)
+#define GEAR_RADIUS 0.01// Radius of gear with holes in meters (1cm)
 #define TIME_INTERVAL 1// Time interval for sample in seconds
 
 void speedometer_task(void *pvParameters);

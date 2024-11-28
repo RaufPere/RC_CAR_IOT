@@ -23,7 +23,7 @@ void speedometer_task(void *pvParameters)
 
     for (;;)
     {
-        /*meter = cyhal_gpio_read(METER_PIN);
+        meter = cyhal_gpio_read(METER_PIN);
 
         if (meter == true && prevMeter == false)
         {
@@ -41,7 +41,7 @@ void speedometer_task(void *pvParameters)
         }
 
         // Sample every TIME_INTERVAL seconds
-        if (xTaskGetTickCount() - last_wake_time >= sample_interval)
+        /*if (xTaskGetTickCount() - last_wake_time >= sample_interval)
         {
             last_wake_time = xTaskGetTickCount();
 
@@ -61,7 +61,8 @@ void speedometer_task(void *pvParameters)
             rotations = 0;
         }*/
 
-        vTaskDelay(pdMS_TO_TICKS(10)); // Small delay to avoid high CPU usage
+        printf("Counter: %d\n",counter);
+        //vTaskDelay(100); // Small delay to avoid high CPU usage
     }
 }
 
