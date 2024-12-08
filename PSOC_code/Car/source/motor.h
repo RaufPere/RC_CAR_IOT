@@ -13,7 +13,8 @@
 #include "stdio.h"
 #include "cybsp.h"
 #include "cyhal.h"
-
+#define MOTOR_TASK_PRIORITY            (configMAX_PRIORITIES - 1)
+#define MOTOR_TASK_STACK_SIZE          (configMINIMAL_STACK_SIZE * 2)
 // define motor pins connections
 #define motorPinA1 P9_1
 #define motorPinA2 P9_2

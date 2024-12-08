@@ -15,7 +15,7 @@ TaskHandle_t  button_task_handle;
 // ADC pin defines
 #define ADC_PIN P10_0 //P10_2
 #define ADC_PIN_2 P10_1 //P10_4
-
+#define SEVENSEGM_TASK_PRIORITY (configMAX_PRIORITIES - 2)
 // 7 segment display connections
 #define S_A P9_0
 #define S_B P9_1
@@ -104,8 +104,8 @@ void JoyStickTask(void * parameters)
 
 		data.y = (cyhal_adc_read(&adc_chan_0_obj1) + 2048) * 255 / 4096;
 
-		printf("ADC value X: %d\r\n", data.x);
-		printf("ADC value Y: %d\r\n", data.y);
+		//printf("ADC value X: %d\r\n", data.x);
+		//printf("ADC value Y: %d\r\n", data.y);
 
 		xQueueOverwrite(JoystickDataQueue, &data);
 
@@ -233,8 +233,8 @@ int main()
 		CY_ASSERT(0);
 	}
 
-	/* Create Button Task for processing button presses */
-	rtos_result = xTaskCreate(DriveSevenSegments, "7segment", configMINIMAL_STACK_SIZE, NULL, 7-2, &sevenSegmentHandle);
+	/* Create Seven segments task for processing button presses */
+	rtos_result = xTaskCreate(DriveSevenSegments, "7segment", configMINIMAL_STACK_SIZE, NULL, SEVENSEGM_TASK_PRIORITY, &sevenSegmentHandle);
 	if( pdPASS != rtos_result)
 	{
 		printf("Failed to create sevensegment task! \n");

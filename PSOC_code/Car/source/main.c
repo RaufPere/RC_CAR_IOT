@@ -77,16 +77,16 @@ int main()
     }
 
     // Create motor driver task
-    rtos_result = xTaskCreate(motor_driver_task,"motor_driver_task", configMINIMAL_STACK_SIZE*2,
-                               NULL, BLUETOOTH_TASK_PRIORITY, &motor_driver_task_handle);
+    rtos_result = xTaskCreate(motor_driver_task,"motor_driver_task", MOTOR_TASK_STACK_SIZE,
+                               NULL, MOTOR_TASK_PRIORITY, &motor_driver_task_handle);
     if( pdPASS != rtos_result)
     {
         printf("Failed to create motor task! \n");
         CY_ASSERT(0);
     }
 
-    rtos_result = xTaskCreate(speedometer_task, "speedometer_task", configMINIMAL_STACK_SIZE*2,
-                                   NULL, BLUETOOTH_TASK_PRIORITY, &motor_driver_task_handle);
+    rtos_result = xTaskCreate(speedometer_task, "speedometer_task", SPEED_TASK_STACK_SIZE,
+                                   NULL, SPEED_TASK_PRIORITY, &motor_driver_task_handle);
 	if( pdPASS != rtos_result)
 	{
 		printf("Failed to create speed task! \n");

@@ -17,13 +17,11 @@
 *        Variable Definitions
 *******************************************************************************/
 static uint16_t bt_connection_id = 0;
-cyhal_rtc_t my_rtc;
 
 /*******************************************************************************
 *        Function Prototypes
 *******************************************************************************/
 static void           ble_app_init                (void);
-static void           ctss_send_notification      (void);
 static void           ctss_scan_result_cback      (wiced_bt_ble_scan_results_t *p_scan_result,
                                                    uint8_t *p_adv_data );
 
@@ -95,7 +93,19 @@ wiced_result_t app_bt_management_callback(wiced_bt_management_evt_t event,
                 printf("Invalid scan state\n");
             }
             break;
+        case BTM_PAIRED_DEVICE_LINK_KEYS_REQUEST_EVT: 			// Retrieve saved link keys
+                    /* This must return WICED_BT_ERROR if bonding information is not stored in EEPROM */
+        			result = WICED_BT_ERROR;
+        			break;
+        case BTM_LOCAL_IDENTITY_KEYS_UPDATE_EVT: 				// Save keys to NVRAM
+        			result = WICED_BT_SUCCESS;
+        			break;
 
+        case  BTM_LOCAL_IDENTITY_KEYS_REQUEST_EVT: 				// Read keys from NVRAM
+                    /* This should return WICED_BT_SUCCESS if not using privacy. If RPA is enabled but keys are not
+                       stored in EEPROM, this must return WICED_BT_ERROR so that the stack will generate new privacy keys */
+        			result = WICED_BT_ERROR;
+        			break;
         default:
             printf("Unhandled Bluetooth Management Event: 0x%x %s\n", event,
                                                    get_btm_event_name(event));
@@ -116,14 +126,6 @@ static void ble_app_init(void)
         CY_ASSERT(0);
     }
 
-    /* Initialize RTC */
-    cy_result = cyhal_rtc_init(&my_rtc);
-    if(CY_RSLT_SUCCESS != cy_result)
-    {
-        printf("[Error] : RTC Initialization failed!! ");
-        CY_ASSERT(0);
-    }
-
    /* Disable pairing for this application */
     wiced_bt_set_pairable_mode(WICED_FALSE, 0);
 
@@ -137,11 +139,9 @@ static void ble_app_init(void)
     printf("GATT database initialization status: %s \n",
             get_bt_gatt_status_name(status));
 
-    printf("Press User button to start scanning.....\n");
-    BaseType_t xHigherPriorityTaskWoken;
-	xHigherPriorityTaskWoken = pdFALSE;
-	vTaskNotifyGiveFromISR(button_task_handle, &xHigherPriorityTaskWoken);
-	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+    //printf("Press User button to start scanning.....\n");
+    xTaskNotifyGive(button_task_handle);
+    taskYIELD();
 }
 
 void ctss_scan_result_cback(wiced_bt_ble_scan_results_t *p_scan_result,
@@ -426,8 +426,6 @@ static wiced_bt_gatt_status_t ble_app_connect_handler (wiced_bt_gatt_connection_
             /* Store the connection ID */
             bt_connection_id = p_conn_status->conn_id;
 
-            //connected();
-
         }
         else
         {
@@ -471,11 +469,16 @@ static wiced_bt_gatt_status_t ble_app_server_handler (wiced_bt_gatt_attribute_re
         case GATT_REQ_READ:
         case GATT_REQ_READ_BLOB:
             /* Attribute read request */
+        	JoystickData data;
+        	xQueueReceive(JoystickDataQueue, &data, portMAX_DELAY);
+        	app_car_joystick[0] = data.x;
+        	app_car_joystick[1] = data.y;
             status = ble_app_read_handler(p_data->conn_id, p_data->opcode,
                                           &p_data->data.read_req,
                                           p_data->len_requested, p_error_handle);
             break;
         case GATT_REQ_READ_BY_TYPE:
+
             status = app_bt_gatt_req_read_by_type_handler(p_data->conn_id,
                                                           p_data->opcode,
                                                           &p_data->data.read_by_type,
@@ -487,15 +490,12 @@ static wiced_bt_gatt_status_t ble_app_server_handler (wiced_bt_gatt_attribute_re
             status = ble_app_write_handler(p_data->conn_id,
                                            p_data->opcode,
                                            &(p_data->data.write_req), p_error_handle);
+            printf("speed: %i\n", *(app_car_speed));
             if((p_data->opcode == GATT_REQ_WRITE) && (status == WICED_BT_GATT_SUCCESS))
             {
                 wiced_bt_gatt_server_send_write_rsp(p_data->conn_id,
                                                     p_data->opcode,
                                                     p_write_request->handle);
-                if(app_cts_current_time_client_char_config[0])
-                {
-                    ctss_send_notification();
-                }
             }
             break;
 
@@ -505,34 +505,6 @@ static wiced_bt_gatt_status_t ble_app_server_handler (wiced_bt_gatt_attribute_re
     return status;
 }
 
-// ***DATA SEND FUNCTION***
-static void ctss_send_notification(void)
-{
-    wiced_bt_gatt_status_t status = WICED_BT_GATT_SUCCESS;
-
-    JoystickData data;
-    xQueueReceive(JoystickDataQueue, &data, portMAX_DELAY);
-
-    printf("Queue received data %ld, %ld\n\r", data.x, data.y);
-
-    // ***DATA TO BE SENT***
-    app_cts_current_time[0] = data.x;
-    app_cts_current_time[1] = data.y;
-
-    status = wiced_bt_gatt_server_send_notification(bt_connection_id,
-                                                    HDLC_CTS_CURRENT_TIME_VALUE,
-                                                    2,
-                                                    app_cts_current_time,NULL);
-
-    if (WICED_BT_GATT_SUCCESS != status)
-    {
-        printf("Send notification failed\n");
-    }
-    else
-    {
-    	printf("Succesfully sent X: %ld - Y: %ld\n\r",app_cts_current_time[0], app_cts_current_time[1]);
-    }
-}
 
 void button_task(void *pvParameters)
 {

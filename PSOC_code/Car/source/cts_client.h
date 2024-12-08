@@ -53,48 +53,58 @@
 /* Interrupt priority for the GPIO connected to the user button */
 #define BUTTON_INTERRUPT_PRIORITY          (7u)
 #define BLUETOOTH_TASK_PRIORITY            (configMAX_PRIORITIES - 1)
-#define BLUETOOTH_TASK_STACK_SIZE          (configMINIMAL_STACK_SIZE * 8)
+#define BLUETOOTH_TASK_STACK_SIZE          (configMINIMAL_STACK_SIZE * 12)
+/*
+ * // Get the stack high-water mark
+        UBaseType_t high_water_mark = uxTaskGetStackHighWaterMark(NULL);
 
+        // High-water mark is returned in words, convert to bytes
+        printf("Minimum stack remaining: %u bytes\n",
+               high_water_mark * sizeof(StackType_t));
+ * */
 #define LED_PIN P13_7
+#define UUID_SERVICE_CAR                                    0x50, 0xAB, 0xC7, 0xEB, 0x64, 0x55, 0x21, 0xA5, 0x3B, 0x40, 0x1B, 0x64, 0x4F, 0xAA, 0xE3, 0x78
+#define UUID_CHARACTERISTIC_CAR_JOYSTICK                    0xEC, 0xC7, 0x84, 0x0A, 0x49, 0xFF, 0xCF, 0xAE, 0x93, 0x4D, 0xA8, 0x7F, 0xE9, 0x05, 0x80, 0x02
+#define UUID_CHARACTERISTIC_CAR_SPEED                       0x9D, 0xA1, 0x7A, 0xEB, 0xF4, 0x27, 0x2A, 0xB8, 0xE5, 0x49, 0x9F, 0x11, 0xC3, 0xF4, 0x76, 0x7A
 
+/* Service CAR */
+#define HDLS_CAR                                              0x0007
+/* Characteristic Joystick */
+#define HDLC_CAR_JOYSTICK                                     0x0008
+#define HDLC_CAR_JOYSTICK_VALUE                               0x0009
+#define MAX_LEN_CAR_JOYSTICK                                  0x0002
+/* Descriptor Client Characteristic Configuration */
+#define HDLD_CAR_JOYSTICK_CLIENT_CHAR_CONFIG                  0x000A
+#define MAX_LEN_CAR_JOYSTICK_CLIENT_CHAR_CONFIG               0x0002
+/* Characteristic Speed */
+#define HDLC_CAR_SPEED                                        0x000B
+#define HDLC_CAR_SPEED_VALUE                                  0x000C
+#define MAX_LEN_CAR_SPEED                                     0x0001
+/* Descriptor Client Characteristic Configuration */
+#define HDLD_CAR_SPEED_CLIENT_CHAR_CONFIG                     0x000D
+#define MAX_LEN_CAR_SPEED_CLIENT_CHAR_CONFIG                  0x0002
+#define START_HANDLE 0x0001
+#define END_HANDLE 0xFFFF
 /*******************************************************************************
 *        Enumerations
 *******************************************************************************/
-/* This enumeration represents the postions of bitfield in 'adjust reason' field
-   of notification */
-typedef enum
-{
-    MANUAL_TIME_UPDATE = 0x01,
-    EXTERNAL_REFERENCE_TIME_UPDATE = 0x02,
-    CHANGE_OF_TIME_ZONE = 0x04,
-    CHANGE_OF_DST = 0x08,
-}adjust_reason_bits_t;
 
 /*******************************************************************************
 *        Structures
 *******************************************************************************/
-typedef struct
-{
-    uint16_t year;
-    uint8_t  month;
-    uint8_t  day;
-    uint8_t  hours;
-    uint8_t  minutes;
-    uint8_t  seconds;
-    uint8_t  day_of_week;
-    uint8_t  fractions_256;
-    uint8_t  adjust_reason;
-} current_time_data_t;
 
 typedef struct
 {
-    uint16_t cts_start_handle;
-    uint16_t cts_end_handle;
-    uint16_t cts_char_handle;
-    uint16_t cts_char_val_handle;
-    uint16_t cts_cccd_handle;
-    bool cts_service_found;
-} cts_discovery_data_t;
+    uint16_t car_start_handle;
+    uint16_t car_end_handle;
+    uint16_t car_char_joystick_handle;
+    uint16_t car_char_joystick_val_handle;
+    uint16_t car__joystick_cccd_handle;
+    uint16_t car_char_speed_handle;
+    uint16_t car_char_speed_val_handle;
+    uint16_t car_speed_cccd_handle;
+    bool car_service_found;
+} car_discovery_data_t;
 /*******************************************************************************
  * Extern variables
  ******************************************************************************/

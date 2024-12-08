@@ -14,7 +14,8 @@
 #include "stdio.h"
 #include "cybsp.h"
 #include "cyhal.h"
-
+#define SPEED_TASK_PRIORITY            (configMAX_PRIORITIES)
+#define SPEED_TASK_STACK_SIZE          (configMINIMAL_STACK_SIZE * 2)
 #define METER_PIN P10_4 // Digital pin of speed sensor
 #define HOLES 20 // Number of holes in the gear
 #define GEAR_RADIUS 0.01// Radius of gear with holes in meters (1cm)

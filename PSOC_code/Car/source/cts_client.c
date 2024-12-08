@@ -15,24 +15,28 @@
 #include "wiced_bt_uuid.h"
 #include "wiced_bt_types.h"
 #include "motor.h"
+#include <string.h>
 
+static const uint8_t serviceUUID[] = { UUID_SERVICE_CAR};
+static const uint8_t characteristicjoystickUUID[] = { UUID_CHARACTERISTIC_CAR_JOYSTICK};
+static const uint8_t characteristicspeedUUID[] = { UUID_CHARACTERISTIC_CAR_SPEED};
 static uint16_t                    bt_connection_id = 0;
-static cts_discovery_data_t        cts_discovery_data;
-static bool                        notify_val = false;
+static car_discovery_data_t        car_discovery_data;
 static bool                        button_press_for_adv = true;
-
+uint8_t * notif_val = NULL;
 static void ble_app_init(void);
 static void handle_received_data_from_controller(wiced_bt_gatt_data_t notif_data);
 static void button_interrupt_handler(void *handler_arg, cyhal_gpio_event_t event);
-static wiced_bt_gatt_status_t ble_app_write_notification_cccd(bool notify);
-
+static wiced_bt_gatt_status_t ble_app_read_write(void);
 /* GATT Event Callback Functions */
 static wiced_bt_gatt_status_t ble_app_connect_handler(wiced_bt_gatt_connection_status_t *p_conn_status);
 static wiced_bt_gatt_status_t ble_app_gatt_event_callback(wiced_bt_gatt_evt_t  event,
                                                           wiced_bt_gatt_event_data_t *p_event_data);
 static wiced_bt_gatt_status_t  ble_app_service_discovery_handler(wiced_bt_gatt_discovery_complete_t *discovery_complete);
 static wiced_bt_gatt_status_t  ble_app_discovery_result_handler(wiced_bt_gatt_discovery_result_t *discovery_result);
-
+static void startCharacteristicDiscovery( void );
+static void startFindAllServiceDiscovery( void );
+static void startServiceDiscovery( void );
 /* Configure GPIO interrupt. */
 cyhal_gpio_callback_data_t button_cb_data =
 {
@@ -139,17 +143,14 @@ static void ble_app_init(void)
     gatt_status = wiced_bt_gatt_db_init(gatt_database, gatt_database_len, NULL);
     printf("GATT database initialization status: %s \n",
             get_bt_gatt_status_name(gatt_status));
-    BaseType_t xHigherPriorityTaskWoken;
-	xHigherPriorityTaskWoken = pdFALSE;
-	vTaskNotifyGiveFromISR(bluetooth_task_handle, &xHigherPriorityTaskWoken);
-	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+	xTaskNotifyGive(bluetooth_task_handle);
+	taskYIELD();
 }
 
 void button_interrupt_handler(void *handler_arg, cyhal_gpio_event_t event)
 {
 
-    BaseType_t xHigherPriorityTaskWoken;
-    xHigherPriorityTaskWoken = pdFALSE;
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     vTaskNotifyGiveFromISR(bluetooth_task_handle, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
 }
@@ -177,6 +178,7 @@ void bluetooth_task(void *pvParameters)
 	      }
     wiced_result = WICED_BT_ERROR;
     wiced_bt_gatt_status_t gatt_status;
+
     for(;;)
     {
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
@@ -193,12 +195,10 @@ void bluetooth_task(void *pvParameters)
         }
         else
         {
-            if((cts_discovery_data.cts_service_found == true) && (bt_connection_id != 0))
+            if((car_discovery_data.car_service_found == true) && (bt_connection_id != 0))
             {
-                /* Toggle the flag to enable/disable CCCD based on previous state */
-                notify_val = !notify_val;
-                gatt_status = ble_app_write_notification_cccd(notify_val);
-                if(WICED_BT_GATT_SUCCESS != gatt_status)
+                gatt_status = ble_app_read_write();
+                if (WICED_BT_GATT_SUCCESS != gatt_status)
                 {
                     printf("Enable/Disable notification failed! Error code: %X \n"
                            ,gatt_status);
@@ -236,25 +236,14 @@ ble_app_gatt_event_callback(wiced_bt_gatt_evt_t event,
                 case GATTC_OPTYPE_WRITE_WITH_RSP:
                     /* Check if GATT operation of enable/disable notification is success. */
                     if ((p_event_data->operation_complete.response_data.handle
-                        == (cts_discovery_data.cts_cccd_handle))
+                        == (0x0c))
                         && (WICED_BT_GATT_SUCCESS == p_event_data->operation_complete.status))
                     {
-                        if(notify_val)
-                        {
-                            //printf("Notifications enabled\n");
-                        }
-                        else
-                        {
-                            printf("Notifications disabled\n");
-                        }
-                    }
-                    else
-                    {
-                        printf("CCCD update failed. Error code: %d\n",
+                        printf("Error code from write op: %d\n",
                                p_event_data->operation_complete.status);
                     }
                     break;
-
+                case GATTC_OPTYPE_READ_HANDLE:
                 case GATTC_OPTYPE_NOTIFICATION:
                     /* Function call to print the time and date notifcation */
                     handle_received_data_from_controller(p_event_data->operation_complete.response_data.att_value);
@@ -264,7 +253,8 @@ ble_app_gatt_event_callback(wiced_bt_gatt_evt_t event,
 
         case GATT_APP_BUFFER_TRANSMITTED_EVT:
         {
-            vPortFree(p_event_data->buffer_xmitted.p_app_data);
+        	// Stack buffer is used. No need to free-> No pvpportmalloc
+            //vPortFree(p_event_data->buffer_xmitted.p_app_data);
             break;
         }
 
@@ -280,7 +270,6 @@ static wiced_bt_gatt_status_t
 ble_app_connect_handler(wiced_bt_gatt_connection_status_t *p_conn_status)
 {
     wiced_bt_gatt_status_t gatt_status =  WICED_BT_GATT_SUCCESS;
-    wiced_bt_gatt_discovery_param_t service_discovery_setup = {0};
     if ( NULL == p_conn_status )
     {
         gatt_status = WICED_BT_GATT_ERROR;
@@ -301,14 +290,8 @@ ble_app_connect_handler(wiced_bt_gatt_connection_status_t *p_conn_status)
         button_press_for_adv = false;
 
         /* Send GATT service discovery request */
-        service_discovery_setup.s_handle = 0x01;
-        service_discovery_setup.e_handle = 0xFFFF;
-        service_discovery_setup.uuid.len = LEN_UUID_16;
-        service_discovery_setup.uuid.uu.uuid16 = UUID_SERVICE_CURRENT_TIME;
-
-        gatt_status = wiced_bt_gatt_client_send_discover(bt_connection_id,
-                                            GATT_DISCOVER_SERVICES_BY_UUID,
-                                                    &service_discovery_setup);
+        startServiceDiscovery();
+        //startCharacteristicDiscovery();
         if(WICED_BT_GATT_SUCCESS != gatt_status)
         {
             printf("GATT Discovery request failed. Error code: %d, "
@@ -332,7 +315,7 @@ ble_app_connect_handler(wiced_bt_gatt_connection_status_t *p_conn_status)
 
         /* Service discovery is performed upon reconnection, so reset the
             * status of service found flag */
-        cts_discovery_data.cts_service_found = false;
+        car_discovery_data.car_service_found = false;
         /* First button press after disconnection must start advertisement */
         button_press_for_adv = true;
     }
@@ -347,44 +330,45 @@ ble_app_discovery_result_handler(wiced_bt_gatt_discovery_result_t *discovery_res
     discovery_type = discovery_result->discovery_type;
     switch (discovery_type)
     {
+    	//case GATT_DISCOVER_SERVICES_ALL:
         case GATT_DISCOVER_SERVICES_BY_UUID:
-            if(UUID_SERVICE_CURRENT_TIME ==
-               discovery_result->discovery_data.group_value.service_type.uu.uuid16)
+            if( memcmp( serviceUUID, discovery_result->discovery_data.included_service_type.service_type.uu.uuid128, LEN_UUID_128 ) == 0 )
             {
-                cts_discovery_data.cts_start_handle = discovery_result->discovery_data.group_value.s_handle;
-                cts_discovery_data.cts_end_handle = discovery_result->discovery_data.group_value.e_handle;
-                printf("CTS Service Found, Start Handle = %d, End Handle = %d \n",
-                        cts_discovery_data.cts_start_handle,
-                        cts_discovery_data.cts_end_handle);
+            	car_discovery_data.car_start_handle = discovery_result->discovery_data.group_value.s_handle;
+            	car_discovery_data.car_end_handle = discovery_result->discovery_data.group_value.e_handle;
+                printf("RC_CAR Service Found, Start Handle = %d, End Handle = %d \n",
+                		car_discovery_data.car_start_handle,
+						car_discovery_data.car_end_handle);
+                car_discovery_data.car_service_found = true;
+                cyhal_gpio_write(LED_PIN, 0);
+            }
+            else{
+            	printf("Car service not found\n");
             }
             break;
 
         case GATT_DISCOVER_CHARACTERISTICS:
-            if(UUID_CHARACTERISTIC_CURRENT_TIME ==
-               discovery_result->discovery_data.characteristic_declaration.char_uuid.uu.uuid16)
+            if(memcmp( characteristicjoystickUUID, discovery_result->discovery_data.characteristic_declaration.char_uuid.uu.uuid128, LEN_UUID_128 ) == 0)
             {
-                cts_discovery_data.cts_char_handle = discovery_result->discovery_data.characteristic_declaration.handle;
-                cts_discovery_data.cts_char_val_handle = discovery_result->discovery_data.characteristic_declaration.val_handle;
-                printf("Current Time characteristic handle = %d, "
-                       "Current Time characteristic value handle = %d\n",
-                        cts_discovery_data.cts_char_handle,
-                        cts_discovery_data.cts_char_val_handle);
+            	car_discovery_data.car_char_joystick_handle = discovery_result->discovery_data.characteristic_declaration.handle;
+            	car_discovery_data.car_char_joystick_val_handle = discovery_result->discovery_data.characteristic_declaration.val_handle;
+                printf("RC_CAR joystick characteristic handle = %d, "
+                       "RC_CAR joystick characteristic value handle = %d\n",
+					   car_discovery_data.car_char_joystick_handle,
+					   car_discovery_data.car_char_joystick_val_handle);
+
+            }
+            if( memcmp( characteristicspeedUUID, discovery_result->discovery_data.characteristic_declaration.char_uuid.uu.uuid128, LEN_UUID_128 ) == 0)
+            {
+            	car_discovery_data.car_char_speed_handle = discovery_result->discovery_data.characteristic_declaration.handle;
+            	car_discovery_data.car_char_speed_val_handle = discovery_result->discovery_data.characteristic_declaration.val_handle;
+                printf("RC_CAR speed characteristic handle = %d, "
+                       "RC_CAR speed characteristic value handle = %d\n",
+					   car_discovery_data.car_char_speed_handle,
+					   car_discovery_data.car_char_speed_val_handle);
+
             }
             break;
-
-        case GATT_DISCOVER_CHARACTERISTIC_DESCRIPTORS:
-            if(UUID_DESCRIPTOR_CLIENT_CHARACTERISTIC_CONFIGURATION ==
-               discovery_result->discovery_data.char_descr_info.type.uu.uuid16)
-            {
-                cts_discovery_data.cts_cccd_handle = discovery_result->discovery_data.char_descr_info.handle;
-                cts_discovery_data.cts_service_found = true;
-                printf("Current Time CCCD found, Handle = %d\n",
-                        cts_discovery_data.cts_cccd_handle);
-                printf("Press User button to start data communication\n");
-                cyhal_gpio_write(LED_PIN, 0);
-            }
-            break;
-
         default:
             break;
         }
@@ -396,72 +380,111 @@ static wiced_bt_gatt_status_t
 ble_app_service_discovery_handler(wiced_bt_gatt_discovery_complete_t *discovery_complete)
 {
     wiced_bt_gatt_status_t gatt_status =  WICED_BT_GATT_SUCCESS;
-    wiced_bt_gatt_discovery_param_t char_discovery_setup = {0};
     wiced_bt_gatt_discovery_type_t discovery_type;
     discovery_type = discovery_complete->discovery_type;
     switch (discovery_type)
     {
         case GATT_DISCOVER_SERVICES_BY_UUID:
         {
-            char_discovery_setup.s_handle = cts_discovery_data.cts_start_handle;
-            char_discovery_setup.e_handle = cts_discovery_data.cts_end_handle;
-            char_discovery_setup.uuid.uu.uuid16 = UUID_CHARACTERISTIC_CURRENT_TIME;
-            gatt_status = wiced_bt_gatt_client_send_discover(bt_connection_id,
-                                                GATT_DISCOVER_CHARACTERISTICS,
-                                                &char_discovery_setup);
-            if(WICED_BT_GATT_SUCCESS != gatt_status)
-            printf("GATT characteristics discovery failed! Error code = %d\n", gatt_status);
+        	/*
+        	 * After having found services due to findservice() inside BLE_connect_handler
+        	 * program goes here? Why? No idea. This is supposed to be the discovery_handler
+        	 * the program should go here first and discover services, characteristics and then client descriptors if needed
+        	 * Now this ENUM is being used to find characteristics of RC car service
+        	 * To use this handler as a first resort to find services, chara... doesn't work
+        	*/
+        	startCharacteristicDiscovery();
             break;
+
         }
-
-        case GATT_DISCOVER_CHARACTERISTICS:
-        {
-            char_discovery_setup.s_handle = cts_discovery_data.cts_start_handle;
-            char_discovery_setup.e_handle = cts_discovery_data.cts_end_handle;
-            char_discovery_setup.uuid.uu.uuid16 = UUID_CHARACTERISTIC_CURRENT_TIME;
-            gatt_status = wiced_bt_gatt_client_send_discover(bt_connection_id,
-                                               GATT_DISCOVER_CHARACTERISTIC_DESCRIPTORS,
-                                               &char_discovery_setup);
-
-            if(WICED_BT_GATT_SUCCESS != gatt_status)
-            printf("GATT CCCD discovery failed! Error code = %d\n", gatt_status);
-            break;
-        }
-
         default:
             break;
     }
     return gatt_status;
 }
 
-// ***REQUEST CONTROLLER FOR DATA***
-static wiced_bt_gatt_status_t ble_app_write_notification_cccd(bool notify)
+/*******************************************************************************
+* Function Name: startServiceDiscovery
+********************************************************************************/
+static void startFindAllServiceDiscovery( void ) // @suppress("Unused static function")
+{
+    wiced_bt_gatt_discovery_param_t discovery_param;
+    memset( &discovery_param, 0, sizeof( discovery_param ) );
+    discovery_param.s_handle = 0x0001;
+    discovery_param.e_handle = 0xFFFF;
+    wiced_bt_gatt_status_t status = wiced_bt_gatt_client_send_discover ( bt_connection_id, GATT_DISCOVER_SERVICES_ALL, &discovery_param );
+    printf( "Started service discovery. Status: 0x%02X\r\n", status );
+}
+
+/*******************************************************************************
+* Function Name: startServiceDiscovery
+********************************************************************************/
+static void startServiceDiscovery( void )
+{
+    wiced_bt_gatt_discovery_param_t discovery_param;
+    memset( &discovery_param, 0, sizeof( discovery_param ) );
+    discovery_param.s_handle = 0x0001;
+    discovery_param.e_handle = 0xFFFF;
+    discovery_param.uuid.len = LEN_UUID_128;
+    memcpy( &discovery_param.uuid.uu.uuid128, serviceUUID, LEN_UUID_128 );
+
+    wiced_bt_gatt_status_t status = wiced_bt_gatt_client_send_discover ( bt_connection_id, GATT_DISCOVER_SERVICES_BY_UUID, &discovery_param );
+    printf( "Started service discovery. Status: 0x%02X\r\n", status );
+}
+
+/*******************************************************************************
+* Function Name: startCharacteristicDiscovery
+********************************************************************************/
+static void startCharacteristicDiscovery( void )
+{
+	wiced_bt_gatt_discovery_param_t discovery_param;
+	memset( &discovery_param, 0, sizeof( discovery_param ) );
+	discovery_param.s_handle = car_discovery_data.car_start_handle + 1;
+	discovery_param.e_handle = car_discovery_data.car_end_handle;
+	discovery_param.uuid.len = LEN_UUID_128;
+	memcpy( &discovery_param.uuid.uu.uuid128, serviceUUID, LEN_UUID_128 );
+	wiced_bt_gatt_status_t status = wiced_bt_gatt_client_send_discover( bt_connection_id, GATT_DISCOVER_CHARACTERISTICS, &discovery_param );
+	printf( "Started characteristic discover. Status: 0x%02X\r\n", status );
+}
+
+
+static wiced_bt_gatt_status_t ble_app_read_write()
 {
     wiced_bt_gatt_write_hdr_t  write_hdr = {0};
     wiced_bt_gatt_status_t     gatt_status = WICED_BT_GATT_SUCCESS;
-    uint8_t * notif_val = NULL;
-
-    /* Allocate memory for data to be written on server DB and pass it to stack*/
-    notif_val = pvPortMalloc(sizeof(uint16_t)); //CCCD is two bytes
-    if (notif_val)
-    {
-        notif_val[0] = notify;
-        notif_val[1] = 0;
+    uint8_t read_buf[2];
+    uint8_t app_car_speed[] = {0x00,};
         write_hdr.auth_req = GATT_AUTH_REQ_NONE;
-        write_hdr.handle = cts_discovery_data.cts_cccd_handle;
-        write_hdr.len      = LEN_UUID_16;
+        write_hdr.handle = HDLC_CAR_SPEED_VALUE;
+        write_hdr.len      = sizeof(app_car_speed);
         write_hdr.offset = 0;
-
-        for (;;)
+        for(;;)
         {
+
+			gatt_status = wiced_bt_gatt_client_send_read_handle(bt_connection_id,
+																  HDLC_CAR_JOYSTICK_VALUE,
+																  0,
+																  read_buf,
+																  sizeof(read_buf),
+																  GATT_AUTH_REQ_NONE);
+			if(gatt_status != WICED_BT_GATT_SUCCESS){
+							printf("Read from client wasn't executed. Error code: 0x%x\n\r", gatt_status);
+						}
+			vTaskDelay(pdMS_TO_TICKS(500));
+
 			gatt_status = wiced_bt_gatt_client_send_write(bt_connection_id,
 														  GATT_REQ_WRITE,
 														  &write_hdr,
-														  notif_val,
+														  app_car_speed,
 														  NULL);
-			vTaskDelay(pdMS_TO_TICKS(100));
+
+			if(gatt_status != WICED_BT_GATT_SUCCESS){
+				printf("Write from client wasn't executed. Error code: 0x%x\n\r", gatt_status);
+			}
+			vTaskDelay(pdMS_TO_TICKS(500));
+			app_car_speed[0]++;
         }
-    }
+
     return gatt_status;
 }
 
