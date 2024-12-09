@@ -11,6 +11,7 @@
 // hardware interrupts have higher priority. This task isn't more important
 void speedometer_task(void *pvParameters)
 {
+	//vTaskDelay(pdMS_TO_TICKS(500)); // Small delay to avoid high CPU usage
     bool meter = false;
     bool prevMeter = false;
 
@@ -61,8 +62,8 @@ void speedometer_task(void *pvParameters)
             rotations = 0;
         }*/
 
-        //printf("Counter: %d\n",counter);
-        vTaskDelay(pdMS_TO_TICKS(500)); // Small delay to avoid high CPU usage
+        printf("Counter: %d\n",counter);
+        vTaskDelay(pdMS_TO_TICKS(100)); // Small delay to avoid high CPU usage
     }
 }
 

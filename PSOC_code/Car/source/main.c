@@ -86,7 +86,7 @@ int main()
     }
 
     rtos_result = xTaskCreate(speedometer_task, "speedometer_task", SPEED_TASK_STACK_SIZE,
-                                   NULL, SPEED_TASK_PRIORITY, &motor_driver_task_handle);
+                                   NULL, SPEED_TASK_PRIORITY, NULL);
 	if( pdPASS != rtos_result)
 	{
 		printf("Failed to create speed task! \n");
