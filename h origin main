@@ -1,0 +1,80 @@
+[33md90932a[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m ppt and paper update
+[33m5da0a85[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m deze code werkt! als re een fout is ligt het aan de psoc
+[33md81fe5a[m speedometer attempts
+[33m8140676[m Merge branch 'main' of github.com:RaufPere/RC_CAR_IOT
+[33m3a3c145[m schematic
+[33m06695f3[m Update readme.md
+[33m15fc989[m Update README.md
+[33m49be401[m speedometer init
+[33mb1d5fda[m new case
+[33m9aec2be[m fixed?
+[33m953958b[m added 3d printing files for chassis
+[33ma1d1681[m added ppt
+[33m8896dd8[m paper update
+[33m1c2ae17[m Update README.md
+[33m07655bd[m ?
+[33mfabff89[m fixed 7segment task sisue
+[33m7e78519[m cube axis alligned with gyro axis
+[33m27d96d6[m Button and slider on dashboard to enable motors and reset orientation work
+[33mff85f84[m UI reset of orientation works
+[33m886b982[m The webpage now has 2 buttons that the psoc reads from mqtt
+[33mdf4c870[m tracking absolute gyro in the processor
+[33m37f1335[m page layout
+[33mddd6984[m removed speed stuff
+[33m54cb284[m fixed faulty json format
+[33ma89986c[m updated server code with new mqtt encryptions
+[33mdd8feb4[m improved motor functions.
+[33m4c8cebc[m Update readme.md
+[33m55749cf[m Update readme.md
+[33mf9898d6[m all necessary files should be on github
+[33m66845ec[m updated gitignore
+[33maabfae6[m readme
+[33md8c65df[m Create important.md
+[33m977ba8b[m Update README.md
+[33mf63341a[m updated car code and repo cleanup
+[33md2692d5[m controller with no delay
+[33m83524d6[m removed mtb shared from controller, un needed
+[33m4af5ac7[m added project mtbshared for controller
+[33m04bdbd1[m added project for contorller to git
+[33m88f0c7a[m full integration and work on increasing BLE comms speed
+[33me4ffb54[m Full integration of subcomponents work || workpoint is slow BLE comms
+[33mc002d07[m integrated motor driver code into car project and cleaned up directory
+[33mb69767f[m added license and hivemq
+[33mf06de8a[m wifi EXAMPLE has certificates || IOTprototype only needs integration from capsense
+[33m85d324e[m MQTT and BLE is integrated and works simultaneously with 0.1ms publishing
+[33m3013ead[m MQTT and BLE is integrated
+[33m4bc47c7[m Periodically publishing msgs via MQTT
+[33m00954c1[m server updates
+[33m9bae1c3[m update server code
+[33mfd73048[m updated
+[33m52fb2e5[m basic flask server for mqtt
+[33md530799[m repo restructured
+[33m4d1fe78[m goofy ah bluetooth
+[33m870472b[m Rauf finish integration of BLE
+[33mb1b7643[m integrated BLE with MQTT and MPU6050
+[33m1ff4832[m Update README.md
+[33m357fcb6[m Update README.md
+[33ma8d21c4[m Update README.md
+[33m266ea06[m gitignore is edited
+[33me52e83c[m test
+[33m26415a3[m mqtt and mpu6050 integration
+[33m7b8a52c[m Revert "mqtt mpu6050 integration"
+[33m0fd41a2[m mqtt mpu6050 integration
+[33m0cb6dbf[m Revert "mqtt MPU integration"
+[33mafbcabb[m mqtt MPU integration
+[33mf8c2604[m Revert "Added car subsystem, mqtt and mpu6050"
+[33m0eae9da[m Added car subsystem, mqtt and mpu6050
+[33m0fd5326[m 7segment functie
+[33mf21a469[m code sends joystick data over bluetooth :)
+[33m5d41654[m sending two data units now for x and y data of joystick
+[33m7113ad5[m Added led for when connected
+[33m3b82d2d[m Connection is automatic and data is repeatadly sent
+[33ma1761c1[m Send custyom data bluetooth
+[33m0e8d5c8[m voorlopige ble server code
+[33m9c7593d[m temporary ble c files
+[33m5c8d22a[m git ignore plus controller code joystick
+[33mb9f5ae0[m git ignore
+[33m8df65d7[m added gitignore
+[33m7a1837c[m Update README.md
+[33m0718824[m Git ignore
+[33m4ea8748[m Initial commit
