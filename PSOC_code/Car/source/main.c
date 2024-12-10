@@ -16,6 +16,7 @@
 #include "task.h"
 #include "motor.h"
 #include "speed.h"
+#include "publisher_task.h"
 
 volatile int uxTopUsedPriority;
 
@@ -25,6 +26,7 @@ TaskHandle_t  motor_driver_task_handle;
 TaskHandle_t  speedometer_task_handle;
 
 QueueHandle_t joystickDataQueueHandle;
+QueueHandle_t speedometerQueueHandle;
 
 int main()
 {
@@ -56,7 +58,10 @@ int main()
     cyhal_gpio_init(METER_PIN, CYHAL_GPIO_DIR_INPUT, CYHAL_GPIO_DRIVE_NONE, false);
 
     // Queue for sending joystick data from bluetooth task to motordriver task.
-    joystickDataQueueHandle = xQueueCreate(1,sizeof(joystickData_t));
+    joystickDataQueueHandle = xQueueCreate(1, sizeof(joystickData_t));
+
+    // Queue for sending speedometer data to mqtt publisher
+    speedometerQueueHandle = xQueueCreate(1, sizeof(speedometer_data_t));
 
     // Create the MQTT Client task.
     rtos_result = xTaskCreate(mqtt_client_task, "MQTT Client task", MQTT_CLIENT_TASK_STACK_SIZE,

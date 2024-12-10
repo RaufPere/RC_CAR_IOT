@@ -67,7 +67,7 @@
 #define TIMER_INT_PRIORITY       (3u)
 #define TIMER_TARGET_FREQUENCY   (10000u)
 #define TIMER_COUNT_PERIOD       (999u)
-#define MQTT_PAYLOAD_SIZE (256u)
+#define MQTT_PAYLOAD_SIZE (350u)
 /* Interrupt priority for User Button Input. */
 
 
@@ -100,6 +100,7 @@ TaskHandle_t publisher_task_handle;
 
 /* Handle of the queue holding the commands for the publisher task */
 QueueHandle_t publisher_task_q;
+QueueHandle_t speedometer_task_q;
 
 /* Structure to store publish message information. */
 cy_mqtt_publish_info_t publish_info =
@@ -162,6 +163,8 @@ void publisher_task(void *pvParameters)
     /* Create a message queue to communicate with other tasks and callbacks. */
     publisher_task_q = xQueueCreate(PUBLISHER_TASK_QUEUE_LENGTH, sizeof(publisher_data_t));
 
+    speedometer_data_t dataSpeed;
+
     while (true)
     {
         /* Wait for commands from other tasks and callbacks. */
@@ -186,32 +189,36 @@ void publisher_task(void *pvParameters)
                 case PUBLISH_MQTT_MSG:
                 {
                 	// Wake the MPU6050 up from sleep mode
-                	               MPU6050_i2c_config();
-                	               // Read accelerometer registers
-                	               MPU6050_i2c_accelerometer(&publisher_q_data.accel_x, &publisher_q_data.accel_y,
-                	               						&publisher_q_data.accel_z, &publisher_q_data.magnitude);
-                	               // Read temperature registers
-                	               MPU6050_i2c_tempRead(&publisher_q_data.temperature);
-                	               // Read gyroscope registers
-                	               MPU6050_i2c_gyroscoop(&publisher_q_data.gyro_x, &publisher_q_data.gyro_y, &publisher_q_data.gyro_z
-                	            		   ,&publisher_q_data.gyro_x_abs ,&publisher_q_data.gyro_y_abs, &publisher_q_data.gyro_z_abs);
-                	                /* Publish the data received over the message queue. */
-                	               char payload_buffer[MQTT_PAYLOAD_SIZE];  // Allocate enough space for the formatted string
+				   MPU6050_i2c_config();
+				   // Read accelerometer registers
+				   MPU6050_i2c_accelerometer(&publisher_q_data.accel_x, &publisher_q_data.accel_y,
+										&publisher_q_data.accel_z, &publisher_q_data.magnitude);
+				   // Read temperature registers
+				   MPU6050_i2c_tempRead(&publisher_q_data.temperature);
+				   // Read gyroscope registers
+				   MPU6050_i2c_gyroscoop(&publisher_q_data.gyro_x, &publisher_q_data.gyro_y, &publisher_q_data.gyro_z
+						   ,&publisher_q_data.gyro_x_abs ,&publisher_q_data.gyro_y_abs, &publisher_q_data.gyro_z_abs);
+					/* Publish the data received over the message queue. */
+				   char payload_buffer[MQTT_PAYLOAD_SIZE];  // Allocate enough space for the formatted string
 
-                	               // Format the data into the buffer as JSON or similar format
-                	               snprintf(payload_buffer, sizeof(payload_buffer),
-                	                        "{"
-                	                        "\"accel_x\": %.2f, \"accel_y\": %.2f, \"accel_z\": %.2f, \"magnitude\": %.2f, "
-                	                        "\"gyro_x\": %.2f, \"gyro_y\": %.2f, \"gyro_z\": %.2f, \"gyro_x_abs\": %.2f, \"gyro_y_abs\": %.2f, \"gyro_z_abs\": %.2f, "
-                	                        "\"temperature\": %.2f"
-                	                        "}",
-                	                        publisher_q_data.accel_x, publisher_q_data.accel_y, publisher_q_data.accel_z,
-                	                        publisher_q_data.magnitude,
-                	                        publisher_q_data.gyro_x, publisher_q_data.gyro_y, publisher_q_data.gyro_z,
-											publisher_q_data.gyro_x_abs ,publisher_q_data.gyro_y_abs, publisher_q_data.gyro_z_abs,
-                	                        publisher_q_data.temperature);
-                	               publish_info.payload = payload_buffer;
-                	                publish_info.payload_len = strlen(publish_info.payload);
+				   // Read speedometer from queue
+				   //xQueueReceive(speedometer_task_q, &dataSpeed, 0);
+
+				   // Format the data into the buffer as JSON or similar format
+				   snprintf(payload_buffer, sizeof(payload_buffer),
+				            "{"
+				            "\"accel_x\": %.2f, \"accel_y\": %.2f, \"accel_z\": %.2f, \"magnitude\": %.2f, "
+				            "\"gyro_x\": %.2f, \"gyro_y\": %.2f, \"gyro_z\": %.2f, \"gyro_x_abs\": %.2f, \"gyro_y_abs\": %.2f, \"gyro_z_abs\": %.2f, "
+				            "\"temperature\": %.2f, \"RPM\": %d, \"speed_mps\": %.2f, \"speed_kph\": %.2f"
+				            "}",
+				            publisher_q_data.accel_x, publisher_q_data.accel_y, publisher_q_data.accel_z,
+				            publisher_q_data.magnitude,
+				            publisher_q_data.gyro_x, publisher_q_data.gyro_y, publisher_q_data.gyro_z,
+				            publisher_q_data.gyro_x_abs, publisher_q_data.gyro_y_abs, publisher_q_data.gyro_z_abs,
+				            publisher_q_data.temperature, dataSpeed.rpm, dataSpeed.speed_mps, dataSpeed.speed_kph);
+
+				   publish_info.payload = payload_buffer;
+					publish_info.payload_len = strlen(publish_info.payload);
 
                     /*printf("\nPublisher: Publishing '%s' on the topic '%s'\n",
                            (char *) publish_info.payload, publish_info.topic);

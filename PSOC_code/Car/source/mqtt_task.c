@@ -169,7 +169,7 @@ void mqtt_client_task(void *pvParameters)
      * message queues.
      */
     mqtt_task_cmd_t mqtt_status;
-    subscriber_data_t subscriber_q_data;
+    //subscriber_data_t subscriber_q_data;
     publisher_data_t publisher_q_data;
 
     /* Configure the Wi-Fi interface as a Wi-Fi STA (i.e. Client). */
