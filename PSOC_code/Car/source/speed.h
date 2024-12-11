@@ -23,4 +23,6 @@
 
 void speedometer_task(void *pvParameters);
 
+extern QueueHandle_t speedometerQueueHandle;
+
 #endif /* SOURCE_SPEED_H_ */
