@@ -186,8 +186,8 @@
         socket.on('mqtt_message', function(data) {
             let messageData = JSON.parse(data.message);
 
-            const gyroX = -messageData.gyro_x_abs/5;
-            const gyroY = -messageData.gyro_y_abs/5;
+            const gyroX = messageData.gyro_x_abs/5;
+            const gyroY = messageData.gyro_y_abs/5;
             const gyroZ = messageData.gyro_z_abs/5;
             
             document.querySelector('.cube').style.transform = `rotateX(${gyroY}deg) rotateY(${gyroZ}deg) rotateZ(${gyroX}deg)`;
@@ -216,7 +216,7 @@
     </script>
 </head>
 <body>
-    <h1>Latest MQTT Message</h1>
+    <h1>RC CAR Dashboard</h1>
 
     <div style="display: flex; justify-content: space-between; width: 90%; max-width: 1200px;">
         <div>

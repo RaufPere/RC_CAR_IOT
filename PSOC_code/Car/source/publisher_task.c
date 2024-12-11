@@ -60,6 +60,8 @@
 #include "cy_retarget_io.h"
 #include "cts_client.h"
 #include "MPU6050.h"
+
+#include "speed.h"
 /******************************************************************************
 * Macros
 ******************************************************************************/
@@ -100,7 +102,6 @@ TaskHandle_t publisher_task_handle;
 
 /* Handle of the queue holding the commands for the publisher task */
 QueueHandle_t publisher_task_q;
-QueueHandle_t speedometer_task_q;
 
 /* Structure to store publish message information. */
 cy_mqtt_publish_info_t publish_info =
@@ -202,20 +203,20 @@ void publisher_task(void *pvParameters)
 				   char payload_buffer[MQTT_PAYLOAD_SIZE];  // Allocate enough space for the formatted string
 
 				   // Read speedometer from queue
-				   //xQueueReceive(speedometer_task_q, &dataSpeed, 0);
+				   xQueueReceive(speedometerQueueHandle, &dataSpeed, 0);
 
 				   // Format the data into the buffer as JSON or similar format
 				   snprintf(payload_buffer, sizeof(payload_buffer),
-				            "{"
-				            "\"accel_x\": %.2f, \"accel_y\": %.2f, \"accel_z\": %.2f, \"magnitude\": %.2f, "
-				            "\"gyro_x\": %.2f, \"gyro_y\": %.2f, \"gyro_z\": %.2f, \"gyro_x_abs\": %.2f, \"gyro_y_abs\": %.2f, \"gyro_z_abs\": %.2f, "
-				            "\"temperature\": %.2f, \"RPM\": %d, \"speed_mps\": %.2f, \"speed_kph\": %.2f"
-				            "}",
-				            publisher_q_data.accel_x, publisher_q_data.accel_y, publisher_q_data.accel_z,
-				            publisher_q_data.magnitude,
-				            publisher_q_data.gyro_x, publisher_q_data.gyro_y, publisher_q_data.gyro_z,
-				            publisher_q_data.gyro_x_abs, publisher_q_data.gyro_y_abs, publisher_q_data.gyro_z_abs,
-				            publisher_q_data.temperature, dataSpeed.rpm, dataSpeed.speed_mps, dataSpeed.speed_kph);
+					"{"
+					"\"accel_x\": %.2f, \"accel_y\": %.2f, \"accel_z\": %.2f, \"magnitude\": %.2f, "
+					"\"gyro_x\": %.2f, \"gyro_y\": %.2f, \"gyro_z\": %.2f, \"gyro_x_abs\": %.2f, \"gyro_y_abs\": %.2f, \"gyro_z_abs\": %.2f, "
+					"\"temperature\": %.2f, \"RPM\": %d, \"speed_mps\": %.2f, \"speed_kph\": %.2f"
+					"}",
+					publisher_q_data.accel_x, publisher_q_data.accel_y, publisher_q_data.accel_z,
+					publisher_q_data.magnitude,
+					publisher_q_data.gyro_x, publisher_q_data.gyro_y, publisher_q_data.gyro_z,
+					publisher_q_data.gyro_x_abs, publisher_q_data.gyro_y_abs, publisher_q_data.gyro_z_abs,
+					publisher_q_data.temperature, dataSpeed.rpm, dataSpeed.speed_mps, dataSpeed.speed_kph);
 
 				   publish_info.payload = payload_buffer;
 					publish_info.payload_len = strlen(publish_info.payload);
