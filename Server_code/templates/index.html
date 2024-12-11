@@ -16,7 +16,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             min-height: 100vh;
             text-align: center;
         }
@@ -34,8 +34,8 @@
         }
 
         table {
-            width: 45%;
-            margin: 20px;
+            width: 90%;
+            margin: 20px auto;
             border-collapse: collapse;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
@@ -64,6 +64,16 @@
 
         tr:hover td {
             background-color: #e0f7fa;
+        }
+
+        .split-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .split-table table {
+            width: 100%;
         }
 
         /* Cube styles */
@@ -111,7 +121,12 @@
 
         /* Button Styles */
         .button-container {
-            margin-top: 20px;
+            margin-top: 10px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
         }
 
         .btn {
@@ -173,6 +188,13 @@
         input:checked + .slider:before {
             transform: translateX(26px);
         }
+
+        .dashboard-container {
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+            max-width: 1200px;
+        }
     </style>
     <script>
         var socket = io.connect('http://' + document.domain + ':' + location.port);
@@ -194,15 +216,25 @@
 
             var table = document.getElementById('mqttTable');
             table.innerHTML = '';
-            for (var key in messageData) {
-                if (messageData.hasOwnProperty(key)) {
-                    var row = table.insertRow();
-                    var cell1 = row.insertCell(0);
-                    var cell2 = row.insertCell(1);
-                    cell1.innerHTML = key;
-                    cell2.innerHTML = messageData[key];
+            const keys = Object.keys(messageData);
+            const midpoint = Math.ceil(keys.length / 2);
+
+            let column1 = '<table><tr><th>Key</th><th>Value</th></tr>';
+            let column2 = '<table><tr><th>Key</th><th>Value</th></tr>';
+
+            keys.forEach((key, index) => {
+                const row = `<tr><td>${key}</td><td>${messageData[key]}</td></tr>`;
+                if (index < midpoint) {
+                    column1 += row;
+                } else {
+                    column2 += row;
                 }
-            }
+            });
+
+            column1 += '</table>';
+            column2 += '</table>';
+
+            table.innerHTML = `<div class='split-table'>${column1}${column2}</div>`;
         });
 
         function resetOrientation() {
@@ -218,15 +250,19 @@
 <body>
     <h1>RC CAR Dashboard</h1>
 
-    <div style="display: flex; justify-content: space-between; width: 90%; max-width: 1200px;">
+    <div class="button-container">
+        <button class="btn" onclick="resetOrientation()">Reset Orientation</button>
+        <label class="switch">
+            <input type="checkbox" id="motorSwitch" onchange="toggleMotorState()" checked>
+            <span class="slider"></span>
+        </label>
+        <span>Enable Motors</span>
+    </div>
+
+    <div class="dashboard-container">
         <div>
-            <h2>MPU6050 Data</h2>
-            <table id="mqttTable" border="1">
-                <tr>
-                    <th>Key</th>
-                    <th>Value</th>
-                </tr>
-            </table>
+            <h2>Car Data</h2>
+            <div id="mqttTable"></div>
         </div>
 
         <div>
@@ -243,14 +279,5 @@
             </div>
         </div>
     </div>
-
-    <div class="button-container">
-        <button class="btn" onclick="resetOrientation()">Reset Orientation</button>
-        <label class="switch">
-            <input type="checkbox" id="motorSwitch" onchange="toggleMotorState()" checked>
-            <span class="slider"></span>
-        </label>
-        <span>Enable Motors</span>
-    </div>    
 </body>
 </html>
