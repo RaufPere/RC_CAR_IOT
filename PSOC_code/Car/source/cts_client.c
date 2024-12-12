@@ -15,6 +15,7 @@
 #include "wiced_bt_uuid.h"
 #include "wiced_bt_types.h"
 #include "motor.h"
+#include "speed.h"
 #include <string.h>
 
 static const uint8_t serviceUUID[] = { UUID_SERVICE_CAR};
@@ -23,7 +24,7 @@ static const uint8_t characteristicspeedUUID[] = { UUID_CHARACTERISTIC_CAR_SPEED
 static uint16_t                    bt_connection_id = 0;
 static car_discovery_data_t        car_discovery_data;
 static bool                        button_press_for_adv = true;
-uint8_t * notif_val = NULL;
+//QueueHandle_t speedometerQueueHandle;
 static void ble_app_init(void);
 static void handle_received_data_from_controller(wiced_bt_gatt_data_t notif_data);
 static void button_interrupt_handler(void *handler_arg, cyhal_gpio_event_t event);
@@ -453,6 +454,8 @@ static wiced_bt_gatt_status_t ble_app_read_write()
     wiced_bt_gatt_write_hdr_t  write_hdr = {0};
     wiced_bt_gatt_status_t     gatt_status = WICED_BT_GATT_SUCCESS;
     uint8_t read_buf[2];
+    speedometer_data_t data;
+    double scaled_speed;
     uint8_t app_car_speed[] = {0x00,};
         write_hdr.auth_req = GATT_AUTH_REQ_NONE;
         write_hdr.handle = HDLC_CAR_SPEED_VALUE;
@@ -460,7 +463,6 @@ static wiced_bt_gatt_status_t ble_app_read_write()
         write_hdr.offset = 0;
         for(;;)
         {
-
 			gatt_status = wiced_bt_gatt_client_send_read_handle(bt_connection_id,
 																  HDLC_CAR_JOYSTICK_VALUE,
 																  0,
@@ -470,19 +472,23 @@ static wiced_bt_gatt_status_t ble_app_read_write()
 			if(gatt_status != WICED_BT_GATT_SUCCESS){
 							printf("Read from client wasn't executed. Error code: 0x%x\n\r", gatt_status);
 						}
-			vTaskDelay(pdMS_TO_TICKS(500));
+			vTaskDelay(pdMS_TO_TICKS(200));
+			xQueueReceive(speedometerQueueHandle, &data, 0);
+		    scaled_speed = round((data.speed_kph * 10));
 
+			if (scaled_speed < 0) scaled_speed = 0;       // Ensure no negative values
+			else if (scaled_speed > 255) scaled_speed = 255; // Ensure within uint8_t range
+
+			app_car_speed[0] = (uint8_t)scaled_speed;
 			gatt_status = wiced_bt_gatt_client_send_write(bt_connection_id,
 														  GATT_REQ_WRITE,
 														  &write_hdr,
 														  app_car_speed,
 														  NULL);
-
 			if(gatt_status != WICED_BT_GATT_SUCCESS){
 				printf("Write from client wasn't executed. Error code: 0x%x\n\r", gatt_status);
 			}
-			vTaskDelay(pdMS_TO_TICKS(500));
-			app_car_speed[0]++;
+			vTaskDelay(pdMS_TO_TICKS(200));
         }
 
     return gatt_status;

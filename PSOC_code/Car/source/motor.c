@@ -49,16 +49,8 @@ void motorDriverFunction(uint8_t forward, uint8_t rotation)
 		cyhal_pwm_set_duty_cycle(&pwm_obj_motorB1, 0, PWM_FREQUENCY);
 
 		// Set pwm on correct h bridge pair to get movement
-		if (LPstate == false)
-		{
-			cyhal_pwm_set_duty_cycle(&pwm_obj_motorA1, 30, PWM_FREQUENCY);
-			cyhal_pwm_set_duty_cycle(&pwm_obj_motorB2, 30, PWM_FREQUENCY);
-		}
-		else
-		{
-			cyhal_pwm_set_duty_cycle(&pwm_obj_motorA1, 15, PWM_FREQUENCY);
-			cyhal_pwm_set_duty_cycle(&pwm_obj_motorB2, 15, PWM_FREQUENCY);
-		}
+		cyhal_pwm_set_duty_cycle(&pwm_obj_motorA1, 30, PWM_FREQUENCY);
+		cyhal_pwm_set_duty_cycle(&pwm_obj_motorB2, 30, PWM_FREQUENCY);
 
 	}
 	// Turn left at fixed speed
@@ -69,16 +61,9 @@ void motorDriverFunction(uint8_t forward, uint8_t rotation)
 		cyhal_pwm_set_duty_cycle(&pwm_obj_motorB2, 0, PWM_FREQUENCY);
 
 		// Set pwm on correct h bridge pair to get movement
-		if (LPstate == false)
-		{
-			cyhal_pwm_set_duty_cycle(&pwm_obj_motorA2, 30, PWM_FREQUENCY);
-			cyhal_pwm_set_duty_cycle(&pwm_obj_motorB1, 30, PWM_FREQUENCY);
-		}
-		else
-		{
-			cyhal_pwm_set_duty_cycle(&pwm_obj_motorA2, 15, PWM_FREQUENCY);
-			cyhal_pwm_set_duty_cycle(&pwm_obj_motorB1, 15, PWM_FREQUENCY);
-		}
+		cyhal_pwm_set_duty_cycle(&pwm_obj_motorA2, 30, PWM_FREQUENCY);
+		cyhal_pwm_set_duty_cycle(&pwm_obj_motorB1, 30, PWM_FREQUENCY);
+
 	}
 	// Drive forward
 	else if (forward >= 185 && (rotation < 240 && rotation > 15) && enableMotors == 1)
@@ -134,6 +119,6 @@ void motor_driver_task(void *pvParameters)
 		xQueueReceive(joystickDataQueueHandle, &inData, portMAX_DELAY);
 
 		// Drive motors
-		motorDriverFunction(127, 127);
+		motorDriverFunction(inData.x, inData.y);
 	}
 }

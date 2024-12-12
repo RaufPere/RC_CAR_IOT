@@ -23,6 +23,12 @@
 #define GEAR_RADIUS 0.035// Radius of gear with holes in meters (3.5cm)
 #define TIME_INTERVAL 0.25// Time interval for sample in seconds
 
+typedef struct{
+	double speed_kph;
+	double speed_mps;
+	int rpm;
+} speedometer_data_t;
+
 void speedometer_task(void *pvParameters);
 
 extern QueueHandle_t speedometerQueueHandle;

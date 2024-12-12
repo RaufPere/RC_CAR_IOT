@@ -80,11 +80,6 @@ typedef struct{
     float temperature;
 } publisher_data_t;
 
-typedef struct{
-	double speed_kph;
-	double speed_mps;
-	int rpm;
-} speedometer_data_t;
 
 /*******************************************************************************
 * Extern Variables
