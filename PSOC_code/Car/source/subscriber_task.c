@@ -53,7 +53,9 @@
 
 /* Configuration file for MQTT client */
 #include "mqtt_client_config.h"
-
+#include "cy_pdl.h"  // Include the Peripheral Driver Library
+#include "cyhal.h"   // Include the HAL library
+#include "cybsp.h"   // Include the Board Support Package
 /* Middleware libraries */
 #include "cy_mqtt_api.h"
 #include "cy_retarget_io.h"
@@ -75,7 +77,7 @@
  * subscriber task.
  */
 #define SUBSCRIBER_TASK_QUEUE_LENGTH            (1u)
-
+void EnterULPMode(void);
 /******************************************************************************
 * Global Variables
 *******************************************************************************/
@@ -179,7 +181,6 @@ void subscriber_task(void *pvParameters)
         }
     }
 }
-
 /******************************************************************************
  * Function Name: subscribe_to_topic
  ******************************************************************************
@@ -294,21 +295,22 @@ void mqtt_subscription_callback(cy_mqtt_publish_info_t *received_msg_info)
 			printf("ULP request received!\n");
 			LPstate = true;
 
+			// Put the CPU to sleep while the LP Timer runs
+			/*
 			if (Cy_SysPm_SystemEnterUlp() == CY_SYSPM_SUCCESS)
 			{
-				printf("Entered ULP mode!\n");
+				printf("Entered default LP mode!\n");
 			}
 			else
 			{
-				printf("Failed to enter ULP mode!\n");
-				printf("")
-			}
+				printf("Failed to enter default LP mode!\n");
+			}*/
 		}
 		else
 		{
 			printf("ULP disable request received!\n");
 			LPstate = false;
-
+/*
 			if (Cy_SysPm_SystemEnterLp() == CY_SYSPM_SUCCESS)
 			{
 				printf("Entered default LP mode!\n");
@@ -316,7 +318,7 @@ void mqtt_subscription_callback(cy_mqtt_publish_info_t *received_msg_info)
 			else
 			{
 				printf("Failed to enter default LP mode!\n");
-			}
+			}*/
 		}
 	}
 
@@ -353,4 +355,12 @@ static void unsubscribe_from_topic(void)
     }
 }
 
+void EnterULPMode(void)
+{
+    // 1. Reduce the HF clock frequency (HfClk0) for ULP mode
+    uint32_t targetHfClkFreqMHz = 25; // Target frequency in MHz (example: 25 MHz)
+
+    // 2. Update the flash wait states for the reduced clock frequency
+    Cy_SysLib_SetWaitStates(true, targetHfClkFreqMHz);
+}
 /* [] END OF FILE */
