@@ -119,6 +119,15 @@ def handle_toggle_motor_state(data):
         payload = json.dumps({'motor_state': data['state']})
         client.publish('MOTOR', payload)  # Publish on the "MPU6050/motor" topic
 
+# New callback function to handle "toggle_low_power_mode" event
+@socketio.on('toggle_low_power_mode')
+def handle_toggle_low_power_mode(data):
+    print(f"LP State Changed: {data['state']}")
+    # Send MQTT message with motor state command
+    if client:
+        payload = json.dumps({'LP_mode': data['state']})
+        client.publish('LP', payload)  # Publish on the "MPU6050/LP" topic
+
 # Start the MQTT listener when the Flask app starts
 if __name__ == '__main__':
     start_mqtt_thread()

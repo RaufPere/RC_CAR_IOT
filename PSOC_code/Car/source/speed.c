@@ -12,24 +12,22 @@
 // hardware interrupts have higher priority. This task isn't more important
 void speedometer_task(void *pvParameters)
 {
-	//vTaskDelay(pdMS_TO_TICKS(500)); // Small delay to avoid high CPU usage
     bool meter = false;
     bool prevMeter = false;
 
     int counter = 0;    // Tracks pulses (holes)
-    int rotations = 0;  // Tracks full rotations
     int pulses_per_rotation = HOLES; // Number of holes in the gear
 
     speedometer_data_t data;
 
     TickType_t last_wake_time = xTaskGetTickCount(); // Keep track of time
-    const TickType_t sample_interval = pdMS_TO_TICKS(TIME_INTERVAL * 500); // Sampling interval in ticks
+    const TickType_t sample_interval = pdMS_TO_TICKS(TIME_INTERVAL * 1000); // Sampling interval in ticks
 
     for (;;)
     {
         meter = cyhal_gpio_read(METER_PIN);
 
-        if (meter == true && prevMeter == false)
+        if (meter && !prevMeter)
         {
             // Rising edge detected
             counter++;
@@ -37,20 +35,13 @@ void speedometer_task(void *pvParameters)
 
         prevMeter = meter;
 
-        if (counter >= pulses_per_rotation)
-        {
-            // A full rotation has occurred
-            counter = 0;
-            rotations++;
-        }
-
         // Sample every TIME_INTERVAL seconds
         if (xTaskGetTickCount() - last_wake_time >= sample_interval)
         {
             last_wake_time = xTaskGetTickCount();
 
             // Calculate RPM
-            data.rpm = rotations * 60 / TIME_INTERVAL;
+            data.rpm = (counter * 60) / (TIME_INTERVAL * pulses_per_rotation);
 
             // Calculate speed in m/s
             data.speed_mps = data.rpm * (2 * M_PI * GEAR_RADIUS) / 60;
@@ -61,16 +52,16 @@ void speedometer_task(void *pvParameters)
             xQueueSend(speedometerQueueHandle, &data, 0);
 
             // Print results
-            // printf("Rotations: %d, RPM: %d, Speed: %.2f m/s, %.2f km/h\n", rotations, data.rpm, data.speed_mps, data.speed_kph);
+            // printf("Pulses: %d, RPM: %d, Speed: %.2f m/s, %.2f km/h\n", counter, data.rpm, data.speed_mps, data.speed_kph);
 
-            // Reset rotations count for next interval
-            rotations = 0;
+            // Reset pulse count for next interval
+            counter = 0;
         }
 
-        //printf("Counter: %d\n",counter);
         vTaskDelay(pdMS_TO_TICKS(1)); // Small delay to avoid high CPU usage
     }
 }
+
 
 
 

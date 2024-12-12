@@ -69,6 +69,7 @@
 #define MQTT_SUB_TOPIC_MPU                "MPU6050"
 #define MQTT_SUB_TOPIC_RESET_GYRO         "GYROrst"
 #define MQTT_SUB_TOPIC_MOTOR        	  "MOTOR"
+#define MQTT_SUB_TOPIC_LP   	          "LP"
 
 /* Set the QoS that is associated with the MQTT publish, and subscribe messages.
  * Valid choices are 0, 1, and 2. Other values should not be used in this macro.

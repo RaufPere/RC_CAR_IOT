@@ -14,12 +14,14 @@
 #include "stdio.h"
 #include "cybsp.h"
 #include "cyhal.h"
+
 #define SPEED_TASK_PRIORITY            (configMAX_PRIORITIES-1)
 #define SPEED_TASK_STACK_SIZE          (configMINIMAL_STACK_SIZE * 2)
+
 #define METER_PIN P10_4 // Digital pin of speed sensor
 #define HOLES 20 // Number of holes in the gear
-#define GEAR_RADIUS 0.01// Radius of gear with holes in meters (1cm)
-#define TIME_INTERVAL 1// Time interval for sample in seconds
+#define GEAR_RADIUS 0.035// Radius of gear with holes in meters (3.5cm)
+#define TIME_INTERVAL 0.25// Time interval for sample in seconds
 
 void speedometer_task(void *pvParameters);
 

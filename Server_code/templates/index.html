@@ -245,6 +245,11 @@
             var motorState = document.getElementById('motorSwitch').checked;
             socket.emit('toggle_motor_state', { state: motorState });
         }
+
+        function toggleLowPowerMode() {
+            var lowPowerState = document.getElementById('lowPowerSwitch').checked;
+            socket.emit('toggle_low_power_mode', { state: lowPowerState });
+        }
     </script>
 </head>
 <body>
@@ -252,11 +257,18 @@
 
     <div class="button-container">
         <button class="btn" onclick="resetOrientation()">Reset Orientation</button>
+
         <label class="switch">
             <input type="checkbox" id="motorSwitch" onchange="toggleMotorState()" checked>
             <span class="slider"></span>
         </label>
         <span>Enable Motors</span>
+
+        <label class="switch">
+            <input type="checkbox" id="lowPowerSwitch" onchange="toggleLowPowerMode()">
+            <span class="slider"></span>
+        </label>
+        <span>Low Power Mode</span>
     </div>
 
     <div class="dashboard-container">

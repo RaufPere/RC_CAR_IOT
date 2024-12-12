@@ -218,7 +218,7 @@ void publisher_task(void *pvParameters)
 					publisher_q_data.gyro_x_abs, publisher_q_data.gyro_y_abs, publisher_q_data.gyro_z_abs,
 					publisher_q_data.temperature, dataSpeed.rpm, dataSpeed.speed_mps, dataSpeed.speed_kph);
 
-				   publish_info.payload = payload_buffer;
+				    publish_info.payload = payload_buffer;
 					publish_info.payload_len = strlen(publish_info.payload);
 
                     /*printf("\nPublisher: Publishing '%s' on the topic '%s'\n",

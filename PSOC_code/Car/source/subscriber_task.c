@@ -69,7 +69,7 @@
 #define MQTT_SUBSCRIBE_RETRY_INTERVAL_MS        (1000)
 
 /* The number of MQTT topics to be subscribed to. */
-#define SUBSCRIPTION_COUNT                      (2)
+#define SUBSCRIPTION_COUNT                      (3)
 
 /* Queue length of a message queue that is used to communicate with the 
  * subscriber task.
@@ -84,12 +84,6 @@ TaskHandle_t subscriber_task_handle;
 
 /* Handle of the queue holding the commands for the subscriber task */
 QueueHandle_t subscriber_task_q;
-
-/* Variable to denote the current state of the user LED that is also used by
- * the publisher task.
- */
-
-const char* gyro_topic = "GYROrst";
 
 /* Configure the subscription information structure. */
 const cy_mqtt_subscribe_info_t subscribe_info_reset_gyro =
@@ -107,7 +101,17 @@ const cy_mqtt_subscribe_info_t subscribe_info_motor =
     .topic_len = (sizeof(MQTT_SUB_TOPIC_MOTOR) - 1)
 };
 
-cy_mqtt_subscribe_info_t topicsArray[SUBSCRIPTION_COUNT] = {subscribe_info_motor, subscribe_info_reset_gyro};
+/* Configure the subscription information structure. */
+const cy_mqtt_subscribe_info_t subscribe_info_LP =
+{
+    .qos = (cy_mqtt_qos_t) MQTT_MESSAGES_QOS,
+    .topic = MQTT_SUB_TOPIC_LP,
+    .topic_len = (sizeof(MQTT_SUB_TOPIC_LP) - 1)
+};
+
+cy_mqtt_subscribe_info_t topicsArray[SUBSCRIPTION_COUNT] = {subscribe_info_motor, subscribe_info_reset_gyro, subscribe_info_LP};
+
+bool LPstate = false;
 
 /******************************************************************************
 * Function Prototypes
@@ -282,6 +286,39 @@ void mqtt_subscription_callback(cy_mqtt_publish_info_t *received_msg_info)
     		gyro_z_abs = 0.0;
     	}
     }
+
+    if (received_msg_info->topic[0] == 'L')
+	{
+		if(!strstr(received_msg_info->payload, "false") != NULL)
+		{
+			printf("ULP request received!\n");
+			LPstate = true;
+
+			if (Cy_SysPm_SystemEnterUlp() == CY_SYSPM_SUCCESS)
+			{
+				printf("Entered ULP mode!\n");
+			}
+			else
+			{
+				printf("Failed to enter ULP mode!\n");
+				printf("")
+			}
+		}
+		else
+		{
+			printf("ULP disable request received!\n");
+			LPstate = false;
+
+			if (Cy_SysPm_SystemEnterLp() == CY_SYSPM_SUCCESS)
+			{
+				printf("Entered default LP mode!\n");
+			}
+			else
+			{
+				printf("Failed to enter default LP mode!\n");
+			}
+		}
+	}
 
     /* Assign the command to be sent to the subscriber task. */
     subscriber_q_data.cmd = UPDATE_DEVICE_STATE;
