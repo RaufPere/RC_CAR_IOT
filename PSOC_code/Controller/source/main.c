@@ -7,8 +7,6 @@
 #include "cycfg_bt_settings.h"
 #include "cts_server.h"
 #include "cybsp_bt_config.h"
-#include "MAX7219.h"
-
 
 volatile int uxTopUsedPriority;
 
@@ -18,22 +16,23 @@ TaskHandle_t  button_task_handle;
 #define ADC_PIN P10_0 //P10_2
 #define ADC_PIN_2 P10_1 //P10_4
 #define SEVENSEGM_TASK_PRIORITY (configMAX_PRIORITIES - 2)
-// 7 segment display connections
-#define S_A P9_0
-#define S_B P9_1
-#define S_C P9_2
-#define S_D P9_3
-#define S_E P9_4
-#define S_F P9_5
-#define S_G P9_6
 
-#define S2_A P5_2
-#define S2_B P5_3
-#define S2_C P5_4
-#define S2_D P5_5
-#define S2_E P5_6
-#define S2_F P13_0
-#define S2_G P13_1
+// 7 segment display connections
+#define S_A P5_2
+#define S_B P5_3
+#define S_C P5_4
+#define S_D P5_5
+#define S_E P5_6
+#define S_F P13_7
+#define S_G P0_2
+
+#define S2_A P12_0
+#define S2_B P12_1
+#define S2_C P6_0
+#define S2_D P12_2
+#define S2_E P6_1
+#define S2_F P12_3
+#define S2_G P9_0
 
 // ADC objects
 cyhal_adc_t adcObj;
@@ -43,8 +42,9 @@ cyhal_adc_channel_t adc_chan_0_obj1;
 // Task and queue handles
 TaskHandle_t joystickHandle;
 TaskHandle_t sevenSegmentHandle;
-TaskHandle_t max7219Handle;
+
 QueueHandle_t JoystickDataQueue;
+QueueHandle_t speedQueue;
 
 void DriveSevenSegments(void * parameters)
 {
@@ -62,18 +62,22 @@ void DriveSevenSegments(void * parameters)
 		0b01101111  // 9
 	};
 
-	int speed = 0;
+	int tens = 0;
+	int units = 0;
+
+	uint8_t rcvSpeed = 0;
+	float speed = 0;
+
 	for (;;)
 	{
-		// ***Receive speed from a queue***
+		xQueueReceive(speedQueue, &rcvSpeed, portMAX_DELAY);
 
-		if (speed > 99)
-		{
-			speed = 99;
-		}
+		speed = ((float)rcvSpeed) / 10;
 
-		int tens = speed / 10;
-		int units = speed % 10;
+		tens = (int)speed;
+		units = (int)((speed - tens) * 10);
+
+		//printf("segment: %d %f %d %d\n", rcvSpeed, speed, tens, units);
 
 		// Set segments for the tens digit on display 1
 		cyhal_gpio_write(S_A, (digits[tens] & 0b00000001) ? 1 : 0);
@@ -185,6 +189,7 @@ int main()
     }
 
     JoystickDataQueue = xQueueCreate(1,sizeof(JoystickData));
+    speedQueue =xQueueCreate(1,sizeof(uint8_t));
 
     initADC();
     initGPIOs();
@@ -195,19 +200,19 @@ int main()
     /* Initialize retarget-io to use the debug UART port */
     cy_retarget_io_init(CYBSP_DEBUG_UART_TX, CYBSP_DEBUG_UART_RX,
                         CY_RETARGET_IO_BAUDRATE);
-/*
+
     printf("**********************AnyCloud Example*************************\n");
     printf("**** Current Time Service (CTS) - Server Application Start ****\n");
     printf("***************************************************************\n\n");
-*/
-    /* Configure platform specific settings for the BT device */
-    //cybt_platform_config_init(&cybsp_bt_platform_cfg);
 
-    /* Register call back and configuration with stack
+    /* Configure platform specific settings for the BT device */
+    cybt_platform_config_init(&cybsp_bt_platform_cfg);
+
+    /* Register call back and configuration with stack */
     result = wiced_bt_stack_init(app_bt_management_callback,
-                               &wiced_bt_cfg_settings);
-*/
-    /* Check if stack initialization was successful /
+                                 &wiced_bt_cfg_settings);
+
+    /* Check if stack initialization was successful */
     if( WICED_BT_SUCCESS == result)
     {
         printf("Bluetooth Stack Initialization Successful \n");
@@ -217,8 +222,8 @@ int main()
         printf("Bluetooth Stack Initialization failed!! \n");
         CY_ASSERT(0);
     }
-/*
-    /* Create Button Task for processing button presses /
+
+    /* Create Button Task for processing button presses */
     rtos_result = xTaskCreate(button_task,"button_task", BUTTON_TASK_STACK_SIZE,
                               NULL, BUTTON_TASK_PRIORITY, &button_task_handle);
     if( pdPASS != rtos_result)
@@ -227,7 +232,7 @@ int main()
         CY_ASSERT(0);
     }
 
-    /* Create Button Task for processing button presses /
+    /* Create Button Task for processing button presses */
 	rtos_result = xTaskCreate(JoyStickTask, "joystick readout", configMINIMAL_STACK_SIZE, NULL, BUTTON_TASK_PRIORITY, &joystickHandle);
 	if( pdPASS != rtos_result)
 	{
@@ -235,19 +240,11 @@ int main()
 		CY_ASSERT(0);
 	}
 
-	/* Create Seven segments task for processing button presses /
+	/* Create Seven segments task for processing button presses */
 	rtos_result = xTaskCreate(DriveSevenSegments, "7segment", configMINIMAL_STACK_SIZE, NULL, SEVENSEGM_TASK_PRIORITY, &sevenSegmentHandle);
 	if( pdPASS != rtos_result)
 	{
 		printf("Failed to create sevensegment task! \n");
-		CY_ASSERT(0);
-	}
-*/
-	/* Create Seven segments task for processing button presses */
-	rtos_result = xTaskCreate(max7219_task, "MAX7219", MAX7219_STACK_SIZE, NULL, MAX7219_TASK_PRIORITY, NULL);
-	if( pdPASS != rtos_result)
-	{
-		printf("Failed to create max7219 task! \n");
 		CY_ASSERT(0);
 	}
 

@@ -490,7 +490,8 @@ static wiced_bt_gatt_status_t ble_app_server_handler (wiced_bt_gatt_attribute_re
             status = ble_app_write_handler(p_data->conn_id,
                                            p_data->opcode,
                                            &(p_data->data.write_req), p_error_handle);
-            printf("speed: %i\n", *(app_car_speed));
+            xQueueOverwrite(speedQueue, (app_car_speed));
+
             if((p_data->opcode == GATT_REQ_WRITE) && (status == WICED_BT_GATT_SUCCESS))
             {
                 wiced_bt_gatt_server_send_write_rsp(p_data->conn_id,

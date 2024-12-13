@@ -30,6 +30,9 @@ typedef struct{
 	u_int8_t y;
 }JoystickData;
 
+// Queue for showing speed on seven segment
+extern QueueHandle_t speedQueue;
+
 /*******************************************************************************
 *        Function Prototypes
 *******************************************************************************/
